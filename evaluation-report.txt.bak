@@ -4,13 +4,5 @@ bwa                    0.05
 bwa                    0.05
 bwa                    0.05
 bwa                    0.05
-match_readmapper       3.99
 match_readmapper       4.02
-match_readmapper       4.12
-match_readmapper       4.14
-match_readmapper       4.01
-ac_readmapper          6.91
-ac_readmapper          6.82
-ac_readmapper          6.91
-ac_readmapper          7.01
-ac_readmapper          6.87
+match_readmapper       4.05

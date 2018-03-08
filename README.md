@@ -79,9 +79,88 @@ reads=../data/sim-reads-d2-tiny.fq
 ## =============================================================
 ```
 
+When testing a mapper, it is called with the following parameters:
+
+```sh
+mapper -d $d $reference $reads
+```
+
+where `$d` is the maximum edit distance, `$reference` is the file containing the reference genome and `$reads` is the file containing the reads, obviously.
+
+If you have built your read-mapper to accept parameters like that, you only have to put it in the `mappers_src` directory, but if
+
+* you need some pre-processing of the reference genome, or
+* your mapper takes other options than these
+
+then you can adapt your mapper using two scripts:
+
+* `${mapper}.preprocess` — where `${mapper}` is the name of your mapper, as specified in the `mappers` variable in the script, and
+* `${mapper}.run` — where, again `${mapper}` is the name of the mapper.
+
+If the `preprocess` script exists, it is called with the reference genome as its only parameter before the mapper is run.
+
+If the `run` script exists, it is call, with the parameters listed above, when we test the mapper.
+
+The `bwa` read-mapper needs to preprocess the reference before we can map with it, and its preprocessing script is [here](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/bwa.preprocess). It doesn’t take the parameters we use in the testing script, so it also needs a run-script, which you can see [here](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/bwa.run).
+
+If the run-script does not exist, the script will expect to find an executable in `mappers_src` with the name you added to the `mappers` variable.
+
+You can use these scripts to add preprocessing to your own read-mapper or to adapt the parameters to the format you have used in your own tool.
+
+A successful test should look something like this:
+
+![](images/succesful-test.png)
+
+
 ## Evaluating mapper performance
 
+To evaluate the relative performance of the read-mappers you can invoke
 
+```sh
+make evaluate
+```
+
+This will run the script [`evaluation/evaluate_mappers.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/evaluate_mappers.sh). As with the test script, you can modify [the header of this script](https://github.com/mailund/gsa-read-mapper/blob/11dd0116fb8bf35c976162beb1a56dfddfb9b521/evaluation/evaluate_mappers.sh#L3-L25) to configure how the performance evaluations are done.
+
+Most of the variables you can change are the same as for the test script, but you do not need a reference mapper for this script. All the mappers you list in the `mappers` variable will be run but the output files will not be compared. To add your own read-mapper to the performance evaluation, you just have to add it to this list. The only new variable is `N` that determines how many times you run each mapper.
+
+```sh
+## Modify here to add or remove mappers or change options
+## =============================================================
+
+# list of read-mappers to evaluate
+mappers="bwa match_readmapper ac_readmapper"
+
+# file name for report
+report_file=../evaluation-report.txt
+log_file=../evaluation.log
+
+# max edit distance to explore
+d=0
+
+# number of time measurements to do
+N=5
+
+# Reference genome
+reference=../data/gorGor3-small-noN.fa
+
+# Reads
+reads=../data/sim-reads-d2-tiny.fq
+
+## =============================================================
+```
+
+The preprocessing- and run-scripts are also used by the evaluation script. The script does not measure the preprocessing time — it is less relevant than the read-mapping time since it is only done once while we expect to map many sequences against the same reference.
+
+A successful evaluation should look something like this:
+
+![](images/sucessful-evaluation.png)
+
+### Plotting the performance evaluation
+
+If you have `R` installed, the evaluation script will use it to plot the performance results. You should get a plot that looks like the one at the bottom of this page. Actually, if you use git and push changes to GitHub, the plot at the bottom of this page *is* the results of the last evaluation you ran.
+
+In the plot, all times are normalised by dividing by the mean running time of the fastest mapper — if you haven’t modified the list of mappers, this is likely to be `bwa` — so running times, shown on the y-axis, are measured in factors of the fastest mapper. So, if your mapper is plotted at y=100 it means that it is one hundred times slower than the fastest.
 
 ## The data files
 
