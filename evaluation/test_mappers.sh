@@ -44,6 +44,20 @@ function failure_tick() {
 	failure "${err_msg}"
 }
 
+## Test that the data is there
+printf "Testing that the reference $(tput setaf 4)$(tput bold)${reference}(tput sgr0) exists "
+if [ -e $reference ]; then
+	success
+else
+	failure_tick "Could not find the reference genome file. "
+fi
+printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}(tput sgr0) exists "
+if [ -e $reads ]; then
+	success
+else
+	failure_tick "Could not find the reads file. "
+fi
+
 ## Run evaluation of all mappers...
 if [ -e $report_file ]; then
 	rm $report_file
