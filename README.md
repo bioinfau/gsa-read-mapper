@@ -156,6 +156,8 @@ A successful evaluation should look something like this:
 
 ![](images/sucessful-evaluation.png)
 
+Here, we see that the fastest mapper, not surprisingly, is `bwa`, then the `match_readmapper` and slowest is the `ac_readmapper`. This is slightly misleading, though; the `match_readmapper` is faster than the `ac_readmapper` when `d` is zero. When we are searching for one read at a time, the benefits of the Aho-Corsick algorithm are not present but the overhead is. Setting `d` to one, however, will make the script unreasonably slow, so remove `match_readmapper` before you do that. Or don’t and learn the hard way that I am right.
+
 ### Plotting the performance evaluation
 
 If you have `R` installed, the evaluation script will use it to plot the performance results. You should get a plot that looks like the one at the bottom of this page. Actually, if you use git and push changes to GitHub, the plot at the bottom of this page *is* the results of the last evaluation you ran.
@@ -163,6 +165,17 @@ If you have `R` installed, the evaluation script will use it to plot the perform
 In the plot, all times are normalised by dividing by the mean running time of the fastest mapper — if you haven’t modified the list of mappers, this is likely to be `bwa` — so running times, shown on the y-axis, are measured in factors of the fastest mapper. So, if your mapper is plotted at y=100 it means that it is one hundred times slower than the fastest.
 
 ## The data files
+
+The `gorGor3-small-noN.fa` and `sim-reads-d2-tiny.fq` files in the `data/` directory are described above. In addition to the, there also index-files for `bwa` in the `data/` directory—so you do not have to index the reference yourself unless you change it. There are also three other reads files:
+* `sim-reads-d2-small.fq` — contains 1000 reads of length 100 that can be up to 2 edits away from the reference `gorGor2-small-noN.fa`
+* `sim-reads-exact-tiny.fq` — contains 10 reads of length 10 that are exact matches to the reference `gorGor2-small-noN.fa`
+* `sim-reads-exact-small.fq` — contains 1000 reads of length 100 that are exact matches to the reference  `gorGor2-small-noN.fa`
+
+In addition to the data files there are two scripts:
+* `randomize-N.py` that replaces ’N’ characters in a FASTA file with random nucleotides, and
+* `simulate-fastq.py` that simulates reads from a FASTA reference.
+
+You can use these scripts to create more data files to test against. You can get all the genomes you can eat at the [UCSC Genome Browser](http://hgdownload.soe.ucsc.edu/downloads.html). For example, you can get the latest gorilla reference genome, [gorGor5.fa.gz](http://hgdownload.soe.ucsc.edu/goldenPath/gorGor5/bigZips/gorGor5.fa.gz). It isn’t that different from the `gorGor3` I have added to the repository, but if you download it from the genome browser you get the entire genome and not a short prefix of chromosome 1.
 
 ## Evaluation
 
