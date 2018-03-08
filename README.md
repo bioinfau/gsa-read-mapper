@@ -109,7 +109,7 @@ You can use these scripts to add preprocessing to your own read-mapper or to ada
 
 A successful test should look something like this:
 
-![](images/succesful-test.png)
+![](images/successful-test.png)
 
 
 ## Evaluating mapper performance
