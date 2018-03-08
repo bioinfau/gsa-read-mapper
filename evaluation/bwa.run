@@ -1,0 +1,6 @@
+#/bin/bash
+
+ref_genome=$3
+reads=$4
+
+bwa mem ${ref_genome} ${reads}

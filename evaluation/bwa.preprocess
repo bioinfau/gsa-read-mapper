@@ -1,0 +1,12 @@
+#/bin/bash
+
+ref_genome=$1
+indices="${ref_genome}.amb ${ref_genome}.ann ${ref_genome}.pac ${ref_genome}.bwt ${ref_genome}.sa"
+
+for idx in $indices; do
+	if [ $ref_genome -nt $idx ]; then
+		bwa index $ref_genome
+		exit 0
+	fi
+done
+

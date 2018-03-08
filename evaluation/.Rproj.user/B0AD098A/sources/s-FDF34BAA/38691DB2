@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520511475771.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "38691DB2",
+    "lastKnownWriteTime" : 1520514407,
+    "last_content_update" : 1520514407705,
+    "path" : "~/Projects/gsa-read-mapper/evaluation/analyse-report.R",
+    "project_path" : "analyse-report.R",
+    "properties" : {
+        "cursorPosition" : "43,45",
+        "scrollLine" : "18"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

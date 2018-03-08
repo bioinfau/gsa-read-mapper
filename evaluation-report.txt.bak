@@ -1,0 +1,16 @@
+mapper                 time
+bwa                    0.07
+bwa                    0.07
+bwa                    0.07
+bwa                    0.07
+bwa                    0.06
+match_readmapper       3.80
+match_readmapper       3.83
+match_readmapper       3.82
+match_readmapper       3.78
+match_readmapper       3.79
+ac_readmapper          6.66
+ac_readmapper          6.71
+ac_readmapper          6.59
+ac_readmapper          6.62
+ac_readmapper          6.60
