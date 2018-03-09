@@ -10,6 +10,8 @@ git clone https://github.com/bioinfau/gsa-read-mapper.git
 
 If you plan to use the clone as a shared repository to work with during the project, you might want to fork it before you clone your own copy.
 
+If you are not familiar with Git and GitHub, but are interested in learning more, I will shamelessly suggest [this book](https://www.dropbox.com/s/j74tzdzj3kcobzk/The%20Beginner%27s%20Guide%20to%20GitHub.epub?dl=0) as a guide.
+
 ## Building mappers
 
 Once you have downloaded or cloned the code you can build the read-mappers I have included here using the command
