@@ -18,7 +18,7 @@
 
 struct search_info {
     int edit_dist;
-    struct fasta_records *records;
+    struct fasta_records *fasta_records;
     struct suffix_array_records *sa_records;
     FILE *sam_file;
 };
@@ -28,14 +28,14 @@ static struct search_info *empty_search_info()
     struct search_info *info =
         (struct search_info*)malloc(sizeof(struct search_info));
     info->edit_dist = 0;
-    info->records = empty_fasta_records();
+    info->fasta_records = empty_fasta_records();
     info->sa_records = empty_suffix_array_records();
     return info;
 }
 
 static void delete_search_info(struct search_info *info)
 {
-    delete_fasta_records(info->records);
+    delete_fasta_records(info->fasta_records);
     delete_suffix_array_records(info->sa_records);
     free(info);
 }
@@ -219,13 +219,15 @@ int main(int argc, char * argv[])
         struct search_info *search_info = empty_search_info();
         search_info->edit_dist = edit_dist;
         
-        if (0 != read_fasta_records(search_info->records, fasta_file)) {
+        if (0 != read_fasta_records(search_info->fasta_records, fasta_file)) {
             fprintf(stderr, "Could not read FASTA file.\n");
             return EXIT_FAILURE;
         }
         fclose(fasta_file);
         
-        if (0 != read_suffix_array_records(search_info->sa_records, sa_file)) {
+        if (0 != read_suffix_array_records(search_info->sa_records,
+                                           search_info->fasta_records,
+                                           sa_file)) {
             fprintf(stderr, "Could not read suffix arrays.\n");
             return EXIT_FAILURE;
         }

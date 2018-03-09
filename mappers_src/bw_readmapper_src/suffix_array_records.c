@@ -18,7 +18,9 @@ void delete_suffix_array_records(struct suffix_array_records *records)
     free(records);
 }
 
-int read_suffix_array_records(struct suffix_array_records *records, FILE *file)
+int read_suffix_array_records(struct suffix_array_records *records,
+                              struct fasta_records *fasta_records,
+                              FILE *file)
 {
     // FIXME
     return 0;
