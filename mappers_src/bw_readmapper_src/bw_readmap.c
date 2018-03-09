@@ -73,15 +73,6 @@ static void read_callback(const char *read_name,
                           void * callback_data) {
     struct search_info *search_info = (struct search_info*)callback_data;
     
-    // I allocate and deallocate the info all the time... I might
-    // be able to save some time by not doing this, but compared to
-    // building and removeing the trie, I don't think it will be much.
-    struct read_search_info *info = empty_read_search_info();
-    info->search_info = search_info;
-    info->read = read;
-    info->quality = quality;
-    info->read_name = read_name;
-    
     // FIXME: SEARCH HERE
     
     delete_read_search_info(info);
