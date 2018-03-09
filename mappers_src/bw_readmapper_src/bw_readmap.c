@@ -5,6 +5,7 @@
  */
 
 #include "suffix_array.h"
+#include "suffix_array_records.h"
 #include "fasta.h"
 #include "fastq.h"
 #include "sam.h"
@@ -18,6 +19,7 @@
 struct search_info {
     int edit_dist;
     struct fasta_records *records;
+    struct suffix_array_records *sa_records;
     FILE *sam_file;
 };
 
@@ -27,12 +29,14 @@ static struct search_info *empty_search_info()
         (struct search_info*)malloc(sizeof(struct search_info));
     info->edit_dist = 0;
     info->records = empty_fasta_records();
+    info->sa_records = empty_suffix_array_records();
     return info;
 }
 
 static void delete_search_info(struct search_info *info)
 {
     delete_fasta_records(info->records);
+    delete_suffix_array_records(info->sa_records);
     free(info);
 }
 
@@ -162,7 +166,10 @@ int main(int argc, char * argv[])
         }
         
         struct fasta_records *records = empty_fasta_records();
-        read_fasta_records(records, fasta_file);
+        if (0 != read_fasta_records(records, fasta_file)) {
+            fprintf(stderr, "Could not read FASTA file.\n");
+            return EXIT_FAILURE;
+        }
         fclose(fasta_file);
         
         char *filename = make_sa_file_name(argv[0]);
@@ -195,6 +202,14 @@ int main(int argc, char * argv[])
             return EXIT_FAILURE;
         }
         
+        char *filename = make_sa_file_name(argv[0]);
+        FILE *sa_file = fopen(filename, "r");
+        if (!sa_file) {
+            fprintf(stderr, "Could not open %s.\n", filename);;
+            return EXIT_FAILURE;
+        }
+        free(filename);
+        
         FILE *fastq_file = fopen(argv[1], "r");
         if (!fastq_file) {
             fprintf(stderr, "Could not open %s.\n", argv[1]);
@@ -203,11 +218,20 @@ int main(int argc, char * argv[])
     
         struct search_info *search_info = empty_search_info();
         search_info->edit_dist = edit_dist;
-        read_fasta_records(search_info->records, fasta_file);
+        
+        if (0 != read_fasta_records(search_info->records, fasta_file)) {
+            fprintf(stderr, "Could not read FASTA file.\n");
+            return EXIT_FAILURE;
+        }
         fclose(fasta_file);
         
-        search_info->sam_file = stdout;
+        if (0 != read_suffix_array_records(search_info->sa_records, sa_file)) {
+            fprintf(stderr, "Could not read suffix arrays.\n");
+            return EXIT_FAILURE;
+        }
+        fclose(sa_file);
         
+        search_info->sam_file = stdout;
         scan_fastq(fastq_file, read_callback, search_info);
 
         delete_search_info(search_info);
