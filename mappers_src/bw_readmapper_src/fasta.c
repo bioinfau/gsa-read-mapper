@@ -74,7 +74,8 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
             continue;
         }
         
-        for (char *c = buffer; *c; ++c) {
+        char *c;
+        for (c = buffer; *c; ++c) {
             if (!isalpha(*c)) continue;
             
             seq[n++] = *c;
@@ -84,6 +85,7 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
                 seq = (char*)realloc(seq, seq_size);
             }
         }
+        seq[n] = 0;
     }
     
     // handle last record...
