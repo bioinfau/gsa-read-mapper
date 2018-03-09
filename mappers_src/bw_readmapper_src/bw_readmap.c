@@ -146,6 +146,15 @@ int main(int argc, char * argv[])
         fclose(fasta_file);
         
         // FIXME: preprocess
+        for (int i = 0; i < records->names->used; i++) {
+            struct suffix_array *sa = qsort_sa_construction(records->sequences->strings[i]);
+            printf("%s", records->names->strings[i]);
+            for (int j = 0; j < sa->length; j ++) {
+                printf(" %lu", sa->array[i]);
+            }
+            printf("\n");
+            delete_suffix_array(sa);
+        }
         
         delete_fasta_records(records);
         

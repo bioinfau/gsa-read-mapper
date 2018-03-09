@@ -13,7 +13,7 @@ static struct suffix_array *allocate_sa(char *string)
 {
     struct suffix_array *sa =
         (struct suffix_array*)malloc(sizeof(struct suffix_array));
-    sa->string = string;
+    sa->string = strdup(string);
     sa->length = strlen(string);
     sa->array = (size_t*)malloc(sa->length * sizeof(size_t));
     
