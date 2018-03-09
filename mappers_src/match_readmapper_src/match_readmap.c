@@ -137,7 +137,7 @@ int main(int argc, char * argv[])
         { "algorithm",  required_argument,      NULL,           'a' },
         { NULL,         0,                      NULL,            0  }
     };
-    while ((opt = getopt_long(argc, argv, "hd:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hd:a:", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 printf("Usage: %s [options] ref.fa reads.fq\n\n", prog_name);
