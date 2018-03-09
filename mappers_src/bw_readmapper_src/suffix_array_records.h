@@ -2,15 +2,12 @@
 #ifndef SUFFIX_ARRAY_RECORDS_H
 #define SUFFIX_ARRAY_RECORDS_H
 
-#include "string_vector.h"
-#include "size_vector.h"
-#include "fasta.h"
 #include <stdio.h>
-
+#include "fasta.h"
 
 struct suffix_array_records {
     struct string_vector *names;
-    struct size_vector *suffix_arrays;
+    size_t **suffix_arrays;
 };
 
 struct suffix_array_records *empty_suffix_array_records();

@@ -233,6 +233,15 @@ int main(int argc, char * argv[])
         }
         fclose(sa_file);
         
+        printf("%d\n", search_info->sa_records->names->used);
+        for (int i = 0; i < search_info->sa_records->names->used; i++) {
+            printf("%s ", search_info->sa_records->names->strings[i]);
+            for (int j = 0; j < 10; ++j) {
+                printf("%lu\n", search_info->sa_records->suffix_arrays[i][j]);
+            }
+            printf("\n");
+        }
+        
         search_info->sam_file = stdout;
         scan_fastq(fastq_file, read_callback, search_info);
 
