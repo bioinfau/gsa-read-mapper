@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <getopt.h>
 
 struct search_info {
@@ -85,90 +86,103 @@ static void read_callback(const char *read_name,
 int main(int argc, char * argv[])
 {
     const char *prog_name = argv[0];
-#if 0
-    const char *algorithm = "naive";
-    int opt; int edit_dist = 0;
+
+    int opt; bool preprocess = false; int edit_dist = 0;
     static struct option longopts[] = {
-        { "help",       no_argument,            NULL,           'h' },
-        { "distance",   required_argument,      NULL,           'd' },
-        { "algorithm",  required_argument,      NULL,           'a' },
+        { "help",        no_argument,            NULL,           'h' },
+        { "preprocess",  required_argument,      NULL,           'p' },
+        { "distance",    required_argument,      NULL,           'd' },
         { NULL,         0,                      NULL,            0  }
     };
-    while ((opt = getopt_long(argc, argv, "hd:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hpd:", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
-                printf("Usage: %s [options] ref.fa reads.fq\n\n", prog_name);
+                printf("Usage: %s -p | --preprocess ref.fa\n"
+                       "       %s [-d distance] ref.fa reads.fq\n",
+                       prog_name, prog_name);
                 printf("Options:\n");
                 printf("\t-h | --help:\t\t Show this message.\n");
                 printf("\t-d | --distance:\t Maximum edit distance for the search.\n");
-                printf("\t-a | --algorithm:\t Algorithm to use for the search.\n");
-                printf("\t\t\t\t Choices are:\n");
-                printf("\t\t\t\t\t\"naive\"\n");
-                printf("\t\t\t\t\t\"bmh\" (Boyer-Moore-Horspool)\n");
-                printf("\t\t\t\t\t\"kmp\" (Knuth-Morris-Pratt)\n");
-                printf("\t\t\t\t\t\"bsearch\" (suffix array binary search)\n");
+                printf("\t-p | --preprocess:\t Preprocess a reference genome.\n");
                 printf("\n\n");
                 return EXIT_SUCCESS;
                 
+            case 'p':
+                preprocess = true;
+                break;
+
             case 'd':
                 edit_dist = atoi(optarg);
                 break;
                 
-            case 'a':
-                algorithm = optarg;
-                break;
-                
             default:
-                fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", prog_name);
+                fprintf(stderr,
+                        "Usage: %s -p|--preprocess ref.fa\n"
+                        "       %s [-d distance] ref.fa reads.fq\n",
+                        prog_name, prog_name);
                 return EXIT_FAILURE;
         }
     }
     argc -= optind;
     argv += optind;
-    
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", prog_name);
-        return EXIT_FAILURE;
-    }
-    
-    FILE *fasta_file = fopen(argv[0], "r");
-    if (!fasta_file) {
-        fprintf(stderr, "Could not open %s.\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-    
-    FILE *fastq_file = fopen(argv[1], "r");
-    if (!fastq_file) {
-        fprintf(stderr, "Could not open %s.\n", argv[1]);
-        return EXIT_FAILURE;
-    }
-    
-    struct search_info *search_info = empty_search_info();
-    search_info->edit_dist = edit_dist;
-    
-    if (strcmp(algorithm, "naive") == 0) {
-        search_info->match_func = naive_exact_match;
-    } else if (strcmp(algorithm, "bmh") == 0) {
-        search_info->match_func = boyer_moore_horspool;
-    } else if (strcmp(algorithm, "kmp") == 0) {
-        search_info->match_func = knuth_morris_pratt;
-    } else if (strcmp(algorithm, "bsearch") == 0) {
-        search_info->match_func = suffix_array_bsearch_match;
+
+    if (preprocess) {
+        if (argc != 1) {
+            fprintf(stderr,
+                    "Usage: %s -p|--preprocess ref.fa\n"
+                    "       %s [-d distance] ref.fa reads.fq\n",
+                    prog_name, prog_name);
+            return EXIT_FAILURE;
+        }
+        
+        FILE *fasta_file = fopen(argv[0], "r");
+        if (!fasta_file) {
+            fprintf(stderr, "Could not open %s.\n", argv[0]);
+            return EXIT_FAILURE;
+        }
+        
+        struct fasta_records *records = empty_fasta_records();
+        read_fasta_records(records, fasta_file);
+        fclose(fasta_file);
+        
+        // FIXME: preprocess
+        
+        delete_fasta_records(records);
+        
     } else {
-        fprintf(stderr, "Unknown search algorithm %s.\n", algorithm);
-        return EXIT_FAILURE;
+        if (argc != 2) {
+            fprintf(stderr,
+                    "Usage: %s -p|--preprocess ref.fa\n"
+                    "       %s [-d distance] ref.fa reads.fq\n",
+                    prog_name, prog_name);
+            return EXIT_FAILURE;
+        }
+    
+        FILE *fasta_file = fopen(argv[0], "r");
+        if (!fasta_file) {
+            fprintf(stderr, "Could not open %s.\n", argv[0]);
+            return EXIT_FAILURE;
+        }
+        
+        FILE *fastq_file = fopen(argv[1], "r");
+        if (!fastq_file) {
+            fprintf(stderr, "Could not open %s.\n", argv[1]);
+            return EXIT_FAILURE;
+        }
+    
+        struct search_info *search_info = empty_search_info();
+        search_info->edit_dist = edit_dist;
+        read_fasta_records(search_info->records, fasta_file);
+        fclose(fasta_file);
+        
+        search_info->sam_file = stdout;
+        
+        scan_fastq(fastq_file, read_callback, search_info);
+
+        delete_search_info(search_info);
+        fclose(fastq_file);
+
     }
-    
-    read_fasta_records(search_info->records, fasta_file);
-    fclose(fasta_file);
-    
-    search_info->sam_file = stdout;
-    
-    scan_fastq(fastq_file, read_callback, search_info);
-    delete_search_info(search_info);
-    fclose(fastq_file);
-    
-#endif
-    
+        
     return EXIT_SUCCESS;
 }
