@@ -1,5 +1,11 @@
 # Read-mapper project for Genome Scale Algorithms
 
+We have written some scripts and read mappers you can use to test your own program and evaluate its performance. To use these scripts and program you need a setup with `make`, `bash`, a C compiler (by default, we assume it is named `cc`), and if you want to create plots of relative performance, and installation of [`R`](https://www.r-project.org).
+
+On a Linux machine, most likely these tools are available by default. On a Windows machine, you can install [Cygwin](https://www.cygwin.com) to get them. On macOS, you can install the setup from the command-line tools in Xcode.
+
+This is the first time we use these scripts in a class, so there might be some issues. If you run into problems, let us know. If you know how to fix them, even better; you can help us improve the testing and evaluation setup. If you cannot get this to work at all, do not fret. We will adapt to that. We hope the scripts are helpful, but if they are more bother than help, just let us know and we won’t require that you use them.
+
 ## Downloading the testing and evaluation scripts
 
 You can download the scripts as [a ZIP file](https://github.com/bioinfau/gsa-read-mapper/archive/master.zip), but if you are familiar with Git, then an easier solution is to clone this repository
