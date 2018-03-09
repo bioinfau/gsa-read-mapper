@@ -83,6 +83,26 @@ static void read_callback(const char *read_name,
     delete_read_search_info(info);
 }
 
+static char *make_sa_file_name(const char *prefix) {
+    int prefix_length = strlen(prefix);
+    int string_length = prefix_length + 1 + strlen("suffix_arrays");
+    
+    char *buffer = (char*)malloc(string_length);
+    char *c = buffer;
+    for (int i = 0; i < prefix_length; i++, c++) {
+        *c = prefix[i];
+    }
+    *c = '.'; c++;
+    char *suffix = "suffix_arrays";
+    int n = strlen(suffix);
+    for (int i = 0; i < n; i++, c++) {
+        *c = suffix[i];
+    }
+    *c = 0;
+    
+    return buffer;
+}
+
 int main(int argc, char * argv[])
 {
     const char *prog_name = argv[0];
@@ -117,7 +137,7 @@ int main(int argc, char * argv[])
                 
             default:
                 fprintf(stderr,
-                        "Usage: %s -p|--preprocess ref.fa\n"
+                        "Usage: %s -p | --preprocess ref.fa\n"
                         "       %s [-d distance] ref.fa reads.fq\n",
                         prog_name, prog_name);
                 return EXIT_FAILURE;
@@ -129,7 +149,7 @@ int main(int argc, char * argv[])
     if (preprocess) {
         if (argc != 1) {
             fprintf(stderr,
-                    "Usage: %s -p|--preprocess ref.fa\n"
+                    "Usage: %s -p | --preprocess ref.fa\n"
                     "       %s [-d distance] ref.fa reads.fq\n",
                     prog_name, prog_name);
             return EXIT_FAILURE;
@@ -145,23 +165,25 @@ int main(int argc, char * argv[])
         read_fasta_records(records, fasta_file);
         fclose(fasta_file);
         
-        // FIXME: preprocess
+        char *filename = make_sa_file_name(argv[0]);
+        FILE *sa_file = fopen(filename, "w");
         for (int i = 0; i < records->names->used; i++) {
             struct suffix_array *sa = qsort_sa_construction(records->sequences->strings[i]);
-            printf("%s", records->names->strings[i]);
-            for (int j = 0; j < sa->length; j ++) {
-                printf(" %lu", sa->array[i]);
+            fprintf(sa_file, "%s", records->names->strings[i]);
+            for (int j = 0; j < sa->length; j++) {
+                fprintf(sa_file, " %lu", sa->array[j]);
             }
-            printf("\n");
+            fprintf(sa_file, "\n");
             delete_suffix_array(sa);
         }
-        
+        fclose(sa_file);
+        free(filename);
         delete_fasta_records(records);
         
     } else {
         if (argc != 2) {
             fprintf(stderr,
-                    "Usage: %s -p|--preprocess ref.fa\n"
+                    "Usage: %s -p | --preprocess ref.fa\n"
                     "       %s [-d distance] ref.fa reads.fq\n",
                     prog_name, prog_name);
             return EXIT_FAILURE;
