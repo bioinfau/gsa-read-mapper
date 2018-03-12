@@ -19,29 +19,29 @@ time_results <- read.table(args[1], header = TRUE)
 
 ordered <- time_results %>%
     group_by(mapper) %>%
-    summarise(mean_time = mean(time)) %>%
-    arrange(mean_time)
+    summarise(median_time = median(time)) %>%
+    arrange(median_time)
 ordered_mappers <- factor(time_results$mapper, levels = ordered$mapper)
-fastest <- ordered %>% top_n(n = -1, wt = mean_time) %>% as.list
+fastest <- ordered %>% top_n(n = -1, wt = median_time) %>% as.list
 
 normalised <- time_results %>%
-    mutate(time = (time / fastest$mean),
+    mutate(time = (time / fastest$median),
            mapper = factor(mapper, levels = ordered$mapper))
 ordered_normalised <- normalised %>%
     group_by(mapper) %>%
-    summarise(mean_time = mean(time))
+    summarise(median_time = median(time))
 
 ggplot(normalised, aes(x = mapper, y = time)) +
     geom_hline(
-        aes(yintercept = mean_time),
+        aes(yintercept = median_time),
         color = "lightgray", linetype="dashed",
         data = ordered_normalised
     ) +
     geom_boxplot(fill = "#E7B800", alpha = 0.7) +
     geom_jitter(width = 0.01, colour = "#fc6721", size = 2) +
     scale_y_continuous(
-        labels = paste(fastest$mapper, "x", round(ordered_normalised$mean_time)),
-        breaks = ordered_normalised$mean_time
+        labels = paste(fastest$mapper, "x", round(ordered_normalised$median_time)),
+        breaks = ordered_normalised$median_time
     ) +
     theme_classic() +
     xlab("Read-mapper") +
