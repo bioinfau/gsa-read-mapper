@@ -119,7 +119,7 @@ void compute_o_table(struct suffix_array *sa, const char *string)
     assert(sa->c_table_symbols_inverse);
     
     fprintf(stderr, "...building b table.\n");
-    char b[sa->length];
+    char *b = malloc(sa->length);
     for (size_t i = 0; i < sa->length; i++) {
         size_t sa_index = sa->array[i];
         if (sa_index == 0) {
@@ -162,7 +162,7 @@ void compute_o_table(struct suffix_array *sa, const char *string)
                 sa->o_table[idx-1];
         }
     }
-
+    free(b);
     fprintf(stderr, "...Done\n");
 
 #if 0

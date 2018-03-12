@@ -140,7 +140,7 @@ for mapper in $mappers; do
 		fi
 		### Constructing reference SAM --------------------------------------------------------------------
 		if [ -x ${mapper}.run ]; then
-			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) "
+			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) "
 			./${mapper}.run -d $d ${reference} ${reads} > ${mapper}.sam 2> $log_file
 			if [ $? -eq 0 ]; then
    				success

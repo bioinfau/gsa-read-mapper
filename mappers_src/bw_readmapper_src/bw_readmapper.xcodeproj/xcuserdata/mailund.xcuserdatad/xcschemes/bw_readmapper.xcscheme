@@ -69,7 +69,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/mailund/Projects/gsa-read-mapper/mappers_src"
+            argument = "/Users/mailund/Projects/gsa-read-mapper/data/gorGor3-small-noN.fa"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -1,12 +1,7 @@
-../data/gorGor3-small-noN.fa
+../data/gorGor3-small-noN.fa ../data/gorGor3-small-noN.fa.suffix_arrays
 Building suffix arrays.
 building suffix array for chr1.
 building c-table for chr1.
 building o-table for chr1.
 ...building b table.
-...allocating o-table size: [5 x 59986501] (299932505)
-...building o-table.
-...Done
-Done.
-Writig preprocessed data to files.
-writing suffix array to ../data/gorGor3-small-noN.fa.suffix_arrays.
+./bw_readmapper.preprocess: line 6: 85702 Segmentation fault: 11  bw_readmapper -p $ref_genome
