@@ -1,5 +1,4 @@
-Reading suffix arrays from ../data/gorGor3-small-noN.fa.suffix_arrays.
-reading suffix array for sequence chr1.
+Reading suffix arrays from ../data/gorGor3-small-noN.fa.suffix_arrays.chr1 [length 59986501].
 Done.
 Reading c-table from ../data/gorGor3-small-noN.fa.c_tables.
 reading c-table for sequence chr1.
@@ -15,8 +14,6 @@ symbol C has index 2.
 symbol G has index 3.
 symbol T has index 4.
 Done.
-Reading o-table from ../data/gorGor3-small-noN.fa.o_tables.
-reading o-table for sequence chr1.
-... size 299932505 [5 x 59986501].
+reading o-table from ../data/gorGor3-small-noN.fa.o_tables.chr1.
+...allocating o-table size: [5 x 59986501] (299932505)
 Done.
-deleting suffix array for sequence chr1.
