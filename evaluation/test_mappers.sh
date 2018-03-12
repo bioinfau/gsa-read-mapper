@@ -95,7 +95,7 @@ else
 	### Constructing reference SAM --------------------------------------------------------------------
 	if [ -x ${ref_mapper}.run ]; then
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) "
-		./${ref_mapper}.run -d $d ${reference} ${reads} > ${ref_mapper}.sam 2> $log_file
+		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam 
 		if [ $? -eq 0 ]; then
    			success
 		else
@@ -106,7 +106,7 @@ else
 	else
 		# if we don't have a run script we call the read-mapper directly
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${ref_mapper}$(tput sgr0) "
-		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} > ${ref_mapper}.sam 2> $log_file
+		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam 
 		if [ $? -eq 0 ]; then
 			success
 		else
@@ -141,7 +141,7 @@ for mapper in $mappers; do
 		### Constructing reference SAM --------------------------------------------------------------------
 		if [ -x ${mapper}.run ]; then
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) "
-			./${mapper}.run -d $d ${reference} ${reads} > ${mapper}.sam 2> $log_file
+			./${mapper}.run -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
 			if [ $? -eq 0 ]; then
    				success
 			else
@@ -152,7 +152,7 @@ for mapper in $mappers; do
 		else
 			# if we don't have a run script we call the read-mapper directly
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${mapper}$(tput sgr0) "
-			../mappers_src/${mapper} -d $d ${reference} ${reads} > ${mapper}.sam 2> $log_file
+			../mappers_src/${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
 			if [ $? -eq 0 ]; then
 				success
 			else
