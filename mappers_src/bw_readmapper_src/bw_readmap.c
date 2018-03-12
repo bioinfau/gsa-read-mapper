@@ -120,8 +120,11 @@ int main(int argc, char * argv[])
         
         write_suffix_array_records(sa_records, records, argv[0]);
         
+        fprintf(stderr, "Clean up suffic array records.\n");
         delete_suffix_array_records(sa_records);
+        fprintf(stderr, "Celan up FASTA records.\n");
         delete_fasta_records(records);
+        fprintf(stderr, "All done.\n");
         
     } else {
         if (argc != 2) {
