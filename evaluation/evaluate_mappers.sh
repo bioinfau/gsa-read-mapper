@@ -3,6 +3,9 @@
 ## Modify here to add or remove mappers or change options
 ## =============================================================
 
+# make sure the mappers are in your path
+export PATH=../mappers_src:$PATH
+
 # list of read-mappers to evaluate
 mappers="bwa match_readmapper ac_readmapper"
 

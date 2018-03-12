@@ -3,11 +3,14 @@
 ## Modify here to add or remove mappers or change options
 ## =============================================================
 
+# Set this to make sure the mappers are in your path
+export PATH=../mappers_src:$PATH
+
 # The mapper we use as the goal to hit
 ref_mapper=match_readmapper
 
 # list of read-mappers to evaluate
-mappers="ac_readmapper"
+mappers="ac_readmapper bw_readmapper"
 
 # file name for report
 report_file=../test-report.txt
@@ -45,13 +48,13 @@ function failure_tick() {
 }
 
 ## Test that the data is there
-printf "Testing that the reference $(tput setaf 4)$(tput bold)${reference}(tput sgr0) exists "
+printf "Testing that the reference $(tput setaf 4)$(tput bold)${reference}$(tput sgr0) exists "
 if [ -e $reference ]; then
 	success
 else
 	failure_tick "Could not find the reference genome file. "
 fi
-printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}(tput sgr0) exists "
+printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}$(tput sgr0) exists "
 if [ -e $reads ]; then
 	success
 else

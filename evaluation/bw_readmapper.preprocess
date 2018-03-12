@@ -1,0 +1,12 @@
+#/bin/bash
+
+ref_genome=$1
+echo ${ref_genome}
+indices="${ref_genome}.suffix_arrays ${ref_genome}.c_tables ${ref_genome}.o_tables"
+
+for idx in $indices; do
+	if [ $ref_genome -nt $idx ]; then
+		bw_readmapper -p $ref_genome 
+		exit $?
+	fi
+done

@@ -1,0 +1,7 @@
+#/bin/bash
+
+ref_genome=$3
+reads=$4
+
+# I have to sort the output because the bw search doesn't do that
+./bw_readmapper mem ${ref_genome} ${reads} | sort

@@ -17,6 +17,7 @@
 		3295996F20567A020031C302 /* pair_stack.c in Sources */ = {isa = PBXBuildFile; fileRef = 3295996220567A010031C302 /* pair_stack.c */; };
 		3295997020567A020031C302 /* suffix_array.c in Sources */ = {isa = PBXBuildFile; fileRef = 3295996420567A010031C302 /* suffix_array.c */; };
 		3295997120567A020031C302 /* fastq.c in Sources */ = {isa = PBXBuildFile; fileRef = 3295996620567A020031C302 /* fastq.c */; };
+		329599742056B6500031C302 /* search.c in Sources */ = {isa = PBXBuildFile; fileRef = 329599722056B6500031C302 /* search.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,8 @@
 		3295996520567A010031C302 /* suffix_array_records.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = suffix_array_records.h; sourceTree = SOURCE_ROOT; };
 		3295996620567A020031C302 /* fastq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fastq.c; sourceTree = SOURCE_ROOT; };
 		3295996720567A020031C302 /* fastq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastq.h; sourceTree = SOURCE_ROOT; };
+		329599722056B6500031C302 /* search.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = search.c; sourceTree = SOURCE_ROOT; };
+		329599732056B6500031C302 /* search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = search.h; sourceTree = SOURCE_ROOT; };
 		32D8FE522056799B000A55B6 /* bw_readmapper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bw_readmapper; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -85,6 +88,8 @@
 			isa = PBXGroup;
 			children = (
 				32959958205679FF0031C302 /* bw_readmap.c */,
+				329599722056B6500031C302 /* search.c */,
+				329599732056B6500031C302 /* search.h */,
 				3295995B20567A000031C302 /* fasta.c */,
 				3295995C20567A000031C302 /* fasta.h */,
 				3295996620567A020031C302 /* fastq.c */,
@@ -169,6 +174,7 @@
 				3295996920567A020031C302 /* bw_readmap.c in Sources */,
 				3295996C20567A020031C302 /* strings.c in Sources */,
 				3295997020567A020031C302 /* suffix_array.c in Sources */,
+				329599742056B6500031C302 /* search.c in Sources */,
 				3295996A20567A020031C302 /* string_vector.c in Sources */,
 				3295996B20567A020031C302 /* fasta.c in Sources */,
 				3295997120567A020031C302 /* fastq.c in Sources */,

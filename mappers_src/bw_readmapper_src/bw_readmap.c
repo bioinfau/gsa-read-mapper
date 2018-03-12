@@ -9,6 +9,7 @@
 #include "fasta.h"
 #include "fastq.h"
 #include "sam.h"
+#include "search.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +21,7 @@ struct search_info {
     int edit_dist;
     struct fasta_records *fasta_records;
     struct suffix_array_records *sa_records;
-    FILE *sam_file;
+    FILE *samfile;
 };
 
 static struct search_info *empty_search_info()
@@ -44,10 +45,19 @@ static void read_callback(const char *read_name,
                           const char *read,
                           const char *quality,
                           void * callback_data) {
-    struct search_info *search_info = (struct search_info*)callback_data;
+    struct search_info *info = (struct search_info*)callback_data;
     
-    // FIXME: SEARCH HERE
-    
+    size_t no_records = info->fasta_records->names->used;
+    for (size_t seq_no = 0; seq_no < no_records; seq_no++) {
+        char *ref_name = info->fasta_records->names->strings[seq_no];
+        struct suffix_array *sa = info->sa_records->suffix_arrays[seq_no];
+        
+        search(read_name, read, strlen(read),
+               quality,
+               ref_name, 0, sa->length - 1, info->edit_dist,
+               sa, info->samfile);
+        
+    }
 }
 
 int main(int argc, char * argv[])
@@ -165,11 +175,7 @@ int main(int argc, char * argv[])
             return EXIT_FAILURE;
         }
         
-        write_suffix_array_records(
-            search_info->sa_records, search_info->fasta_records, "test"
-        );
-        
-        search_info->sam_file = stdout;
+        search_info->samfile = stdout;
         scan_fastq(fastq_file, read_callback, search_info);
 
         delete_search_info(search_info);

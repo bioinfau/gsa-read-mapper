@@ -186,7 +186,7 @@ static int read_o_table_records(struct suffix_array_records *records,
             free(records->suffix_arrays[i]->o_table);
         records->suffix_arrays[i]->o_table = o_table;
         
-#if 1
+#if 0
         struct suffix_array *sa = records->suffix_arrays[i];
         for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
             char symbol = sa->c_table_symbols[i];
@@ -248,7 +248,8 @@ static int read_c_table_records(struct suffix_array_records *records,
             char symbol_c = symbol[0];
             c_table[(size_t)symbol_c] = count;
             c_table_symbols[current_symbol_index++] = symbol_c;
-            fprintf(stderr, "... %c -> %lu\n", symbol_c, count);
+            fprintf(stderr, "... %c -> %lu\n",
+                    (symbol_c == 0) ? '$' : symbol_c, count);
         }
         
         int *c_table_symbols_inverse = calloc(C_TABLE_SIZE, sizeof(int));
@@ -260,7 +261,7 @@ static int read_c_table_records(struct suffix_array_records *records,
             char symbol = c_table_symbols[j];
             int index = c_table_symbols_inverse[symbol];
             fprintf(stderr, "symbol %c has index %d.\n",
-                    symbol, index - 1);
+                    (symbol == '\0') ? '$' : symbol, index - 1);
         }
         
         if (records->suffix_arrays[i]->c_table)
@@ -273,6 +274,7 @@ static int read_c_table_records(struct suffix_array_records *records,
         if (records->suffix_arrays[i]->c_table_symbols_inverse)
             free(records->suffix_arrays[i]->c_table_symbols_inverse);
         records->suffix_arrays[i]->c_table_symbols_inverse = c_table_symbols_inverse;
+        
     }
     
     fprintf(stderr, "Done.\n");
@@ -328,6 +330,16 @@ int read_suffix_array_records(struct suffix_array_records *records,
             sa->array[j] = index;
         }
         records->suffix_arrays[i] = sa;
+        
+#if 0
+        const char *string = fasta_records->sequences->strings[i];
+        fprintf(stderr, "suffix array:\n");
+        for (int j = 0; j < sa->length; j++) {
+            fprintf(stderr, "sa[%3d] == %4lu %s\n",
+                    j, sa->array[j], string + sa->array[j]);
+        }
+#endif
+
     }
     
     fclose(file);
@@ -335,6 +347,8 @@ int read_suffix_array_records(struct suffix_array_records *records,
     
     fprintf(stderr, "Done.\n");
     
+    
+
     read_c_table_records(records, fasta_records, filename_prefix);
     read_o_table_records(records, fasta_records, filename_prefix);
     
