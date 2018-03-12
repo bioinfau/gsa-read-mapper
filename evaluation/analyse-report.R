@@ -38,7 +38,7 @@ ggplot(normalised, aes(x = mapper, y = time)) +
         data = ordered_normalised
     ) +
     geom_boxplot(fill = "#E7B800", alpha = 0.7) +
-    geom_jitter(width = 0.1, colour = "#fc6721", size = 2) +
+    geom_jitter(width = 0.01, colour = "#fc6721", size = 2) +
     scale_y_continuous(
         labels = paste(fastest$mapper, "x", round(ordered_normalised$mean_time)),
         breaks = ordered_normalised$mean_time

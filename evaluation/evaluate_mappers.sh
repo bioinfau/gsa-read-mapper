@@ -7,7 +7,7 @@
 export PATH=../mappers_src:$PATH
 
 # list of read-mappers to evaluate
-mappers="bwa match_readmapper ac_readmapper"
+mappers="bwa match_readmapper ac_readmapper bw_readmapper"
 
 # file name for report
 report_file=../evaluation-report.txt
@@ -55,13 +55,13 @@ function failure_tick() {
 }
 
 ## Test that the data is there
-printf "Testing that the reference $(tput setaf 4)$(tput bold)${reference}(tput sgr0) exists "
+printf "Testing that the reference $(tput setaf 4)$(tput bold)${reference}$(tput sgr0) exists "
 if [ -e $reference ]; then
 	success
 else
 	failure_tick "Could not find the reference genome file. "
 fi
-printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}(tput sgr0) exists "
+printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}$(tput sgr0) exists "
 if [ -e $reads ]; then
 	success
 else
