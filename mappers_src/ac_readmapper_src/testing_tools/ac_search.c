@@ -1,6 +1,7 @@
 #include "../trie.h"
 #include "../strings.h"
 #include "../string_vector.h"
+#include "../string_vector_vector.h"
 #include "../aho_corasick.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,6 +36,7 @@ static char * read_database(FILE *file)
 
 struct callback_data {
 	struct string_vector *patterns;
+	struct string_vector_vector *cigars;
 	const char *database;
 };
 
@@ -43,8 +45,14 @@ static void match_callback(int string_label, size_t index, void * data)
 	struct callback_data *cb_data = (struct callback_data*)data;
 	const char *str = cb_data->patterns->strings[string_label];
 	size_t n = strlen(str);
-	printf("string \"%s\" [%d] matches at index %lu [\"%s\"].\n", 
+	printf("string \"%s\" [%d] matches at index %lu [%s].\n", 
 		str, string_label, index - n + 1, cb_data->database + index - n + 1);
+	struct string_vector *cigars = cb_data->cigars->string_vectors[index];
+	printf("\t%d matches:\n", cigars->used);
+	for (size_t i = 0; i < cigars->used; i++) {
+		printf("\t\t%s\n", cigars->strings[i]);
+	}
+	
 }
 
 int main(int argc, const char **argv)
@@ -70,14 +78,29 @@ int main(int argc, const char **argv)
 	fclose(database_file);
 
 	struct string_vector *patterns = empty_string_vector(10);
+	struct string_vector_vector *cigars = empty_string_vector_vector(10);
 	struct trie *trie = empty_trie();
+
 	char buffer[MAX_LINE_SIZE];
-	int string_label = 0;
 	while (fgets(buffer, MAX_LINE_SIZE, patterns_file) != 0) {
-		char *str = string_copy(strtok(buffer, "\n"));
-        printf("adding \"%s\"\n", str);
-        patterns = add_string_copy(patterns, str);
-        add_string_to_trie(trie, str, string_label++);
+		char pattern[MAX_LINE_SIZE], cigar[MAX_LINE_SIZE];
+		sscanf(buffer, "%s %s", (char*)&pattern, (char*)&cigar);
+        printf("adding \"%s\" [%s]\n", pattern, cigar);
+
+        if (string_in_trie(trie, pattern)) {
+        	// The pattern is already in the tree, but if we are called here
+        	// we have a new CIGAR for the same pattern.
+        	struct trie *node = get_trie_node(trie, pattern);
+        	add_string_copy_to_vector(cigars, node->string_label, cigar);
+
+    	} else {
+        	// NB: the order is important here -- info->patterns->used will be updated
+        	// when we add the pattern to the vector, so we insert in the trie first.
+        	int index = append_vector(cigars);
+        	add_string_to_trie(trie, pattern, index);
+        	add_string_copy(patterns, pattern);
+        	add_string_copy_to_vector(cigars, index, cigar);
+    	}
 	}
     fclose(patterns_file);
 
@@ -87,6 +110,7 @@ int main(int argc, const char **argv)
     printf("searching...\n");
     struct callback_data cb_data;
     cb_data.patterns = patterns;
+    cb_data.cigars = cigars;
     cb_data.database = database;
     aho_corasick_match(database, strlen(database), trie, match_callback, &cb_data);
 

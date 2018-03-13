@@ -22,6 +22,7 @@
 		32B484A12057CF7400AE904F /* strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B4848E2057CF7300AE904F /* strings.c */; };
 		32B484A22057CF7400AE904F /* cigar.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484902057CF7300AE904F /* cigar.c */; };
 		32B484B22057E64100AE904F /* trie.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484B02057E64100AE904F /* trie.c */; };
+		32B484B7205807E500AE904F /* string_vector_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484B6205807E500AE904F /* string_vector_vector.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,6 +78,8 @@
 		32B484A72057E5A900AE904F /* display_trie */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = display_trie; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B484B02057E64100AE904F /* trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trie.c; sourceTree = SOURCE_ROOT; };
 		32B484B12057E64100AE904F /* trie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trie.h; sourceTree = SOURCE_ROOT; };
+		32B484B5205807E500AE904F /* string_vector_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = string_vector_vector.h; sourceTree = SOURCE_ROOT; };
+		32B484B6205807E500AE904F /* string_vector_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = string_vector_vector.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +121,8 @@
 		32B4846C2057CF3900AE904F /* ac_readmapper */ = {
 			isa = PBXGroup;
 			children = (
+				32B484B6205807E500AE904F /* string_vector_vector.c */,
+				32B484B5205807E500AE904F /* string_vector_vector.h */,
 				32B484B02057E64100AE904F /* trie.c */,
 				32B484B12057E64100AE904F /* trie.h */,
 				32B4847C2057CF7000AE904F /* ac_readmap.c */,
@@ -239,6 +244,7 @@
 			files = (
 				32B484952057CF7400AE904F /* sam.c in Sources */,
 				32B484932057CF7400AE904F /* edit_distance_generator.c in Sources */,
+				32B484B7205807E500AE904F /* string_vector_vector.c in Sources */,
 				32B4849A2057CF7400AE904F /* ac_readmap.c in Sources */,
 				32B484A02057CF7400AE904F /* aho_corasick.c in Sources */,
 				32B4849B2057CF7400AE904F /* fasta.c in Sources */,

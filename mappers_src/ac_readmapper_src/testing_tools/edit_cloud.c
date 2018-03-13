@@ -4,8 +4,7 @@
 
 static void callback(const char *string, const char *cigar, void * data)
 {
-	printf("%s\n", string);
-	fprintf(stderr, "%s %s\n", string, cigar);
+	printf("%s %s\n", string, cigar);
 }
 
 int main(int argc, const char **argv)
