@@ -46,17 +46,17 @@ struct suffix_array *qsort_sa_construction(const char *string)
     struct suffix_array *sa = allocate_sa(string);
     
     char **suffixes = malloc(sa->length * sizeof(char *));
-    for (int i = 0; i < sa->length; ++i)
+    for (size_t i = 0; i < sa->length; ++i)
         suffixes[i] = (char *)string + i;
     
     qsort(suffixes, sa->length, sizeof(char *), construction_cmpfunc);
     
-    for (int i = 0; i < sa->length; i++)
-        sa->array[i] = suffixes[i] - string;
+    for (size_t i = 0; i < sa->length; i++)
+        sa->array[i] = (size_t)(suffixes[i] - string);
     
 #if 0
     fprintf(stderr, "suffix array:\n");
-    for (int i = 0; i < sa->length; i++) {
+    for (size_t i = 0; i < sa->length; i++) {
         fprintf(stderr, "sa[%d] == %4lu %s\n",
                 i, sa->array[i], string + sa->array[i]);
     }
@@ -73,11 +73,11 @@ void compute_c_table(struct suffix_array *sa, const char *string)
     // be the main problem.
     sa->c_table = (size_t*)calloc(C_TABLE_SIZE, sizeof(size_t));
     sa->c_table_symbols = (char*)calloc(C_TABLE_SIZE, 1);
-    sa->c_table_symbols_inverse = (int*)calloc(C_TABLE_SIZE, sizeof(int));
+    sa->c_table_symbols_inverse = (size_t*)calloc(C_TABLE_SIZE, sizeof(size_t));
     sa->c_table_no_symbols = 0;
     
     // first, count the occurrances of each symbol
-    for (int i = 0; i < sa->length; i++) {
+    for (size_t i = 0; i < sa->length; i++) {
         size_t index = (size_t)string[i];
         sa->c_table[index]++;
     }
@@ -85,24 +85,24 @@ void compute_c_table(struct suffix_array *sa, const char *string)
     // then, collect the non-empty bins
     for (int c = 0; c < C_TABLE_SIZE; c++) {
         if (sa->c_table[c] != 0) {
-            sa->c_table_symbols[sa->c_table_no_symbols++] = c;
+            sa->c_table_symbols[sa->c_table_no_symbols++] = (char)c;
         }
     }
     
     // get the reverse of that table...
-    for (int i = 0; i < sa->c_table_no_symbols; i++) {
+    for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
         char symbol = sa->c_table_symbols[i];
-        sa->c_table_symbols_inverse[symbol] = i + 1;
+        sa->c_table_symbols_inverse[(int)symbol] = i + 1;
     }
     
     // finally, adjust the table to the actual c-table
     size_t count = 0;
     // start loop at 1 to not count '$'
     sa->c_table['\0'] = 0;
-    for (int i = 1; i < sa->c_table_no_symbols; i++) {
+    for (size_t i = 1; i < sa->c_table_no_symbols; i++) {
         char symbol = sa->c_table_symbols[i];
-        size_t tmp = sa->c_table[symbol];
-        sa->c_table[symbol] = count;
+        size_t tmp = sa->c_table[(int)symbol];
+        sa->c_table[(int)symbol] = count;
         count += tmp;
     }
 }
@@ -180,7 +180,7 @@ size_t o_table_index(struct suffix_array *sa, char symbol, size_t idx)
 {
     // we are off by one so we can use 0
     // to indicate no index (easier with calloc)
-    int symbol_idx = sa->c_table_symbols_inverse[symbol];
+    size_t symbol_idx = sa->c_table_symbols_inverse[(int)symbol];
     assert(symbol_idx > 0);
     size_t real_symbol_idx = symbol_idx - 1;
     return real_symbol_idx * sa->length + idx;

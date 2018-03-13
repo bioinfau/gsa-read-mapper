@@ -26,13 +26,17 @@ void search(const char *read_name, const char *read, size_t read_idx,
         char a = read[read_idx - 1];
         size_t new_L, new_R;
         if (L == 0)
-            new_L = sa->c_table[a] + 1;
+            new_L = sa->c_table[(int)a] + 1;
         else
-            new_L = sa->c_table[a] + 1 + sa->o_table[o_table_index(sa, a, L-1)];
-        new_R = sa->c_table[a] + sa->o_table[o_table_index(sa, a, R)];
+            new_L = sa->c_table[(int)a] + 1 + sa->o_table[o_table_index(sa, a, L-1)];
+        new_R = sa->c_table[(int)a] + sa->o_table[o_table_index(sa, a, R)];
         if (new_L <= new_R) {
             // match
+#ifdef EXTENDED_CIGAR
+            *cigar_buffer = '=';
+#else
             *cigar_buffer = 'M';
+#endif
             search(read_name, read, read_idx - 1, quality,
                    ref_name, new_L, new_R, d,
                    cigar, cigar_buffer - 1,
@@ -43,17 +47,21 @@ void search(const char *read_name, const char *read, size_t read_idx,
                 char b = sa->c_table_symbols[i];
                 if (a == b) continue;
                 
-                if (sa->c_table_symbols_inverse[b] == 0)
+                if (sa->c_table_symbols_inverse[(int)b] == 0)
                     return; // no match with this character
                 
                 if (L == 0)
-                    new_L = sa->c_table[b] + 1;
+                    new_L = sa->c_table[(int)b] + 1;
                 else
-                    new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
-                new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
+                    new_L = sa->c_table[(int)b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
+                new_R = sa->c_table[(int)b] + sa->o_table[o_table_index(sa, b, R)];
                 
                 if (new_L <= new_R) {
+#ifdef EXTENDED_CIGAR
+                    *cigar_buffer = 'X';
+#else
                     *cigar_buffer = 'M';
+#endif
                     search(read_name, read, read_idx - 1, quality,
                            ref_name, new_L, new_R, d - 1,
                            cigar, cigar_buffer - 1,
@@ -68,14 +76,14 @@ void search(const char *read_name, const char *read, size_t read_idx,
             // try deletion
             for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
                 char b = sa->c_table_symbols[i];
-                if (sa->c_table_symbols_inverse[b] == 0)
+                if (sa->c_table_symbols_inverse[(int)b] == 0)
                     return; // no match with this character
                 
                 if (L == 0)
-                    new_L = sa->c_table[b] + 1;
+                    new_L = sa->c_table[(int)b] + 1;
                 else
-                    new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
-                new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
+                    new_L = sa->c_table[(int)b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
+                new_R = sa->c_table[(int)b] + sa->o_table[o_table_index(sa, b, R)];
                 
                 *cigar_buffer = 'D';
                 search(read_name, read, read_idx, quality,
@@ -84,7 +92,7 @@ void search(const char *read_name, const char *read, size_t read_idx,
                        sa, samfile);
             }
             
-            // try insertion
+            // try insertiont
             *cigar_buffer = 'I';
             search(read_name, read, read_idx - 1, quality,
                    ref_name, L, R, d - 1,

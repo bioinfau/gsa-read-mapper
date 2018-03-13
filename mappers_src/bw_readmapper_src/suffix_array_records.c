@@ -19,7 +19,7 @@ struct suffix_array_records *build_suffix_array_records(struct fasta_records *fa
     records->suffix_arrays = (struct suffix_array **)malloc(sizeof(struct suffix_array*)*no_records);
     
     fprintf(stderr, "Building suffix arrays.\n");
-    for (int i = 0; i < no_records; i++) {
+    for (size_t i = 0; i < no_records; i++) {
         const char *seq_name = fasta_records->names->strings[i];
         const char *string = fasta_records->sequences->strings[i];
         add_string_copy(records->names, seq_name);
@@ -42,7 +42,7 @@ void delete_suffix_array_records(struct suffix_array_records *records)
 {
     
     if (records->suffix_arrays) {
-        for (int i = 0; i < records->names->used; i++) {
+        for (size_t i = 0; i < records->names->used; i++) {
             fprintf(stderr, "deleting suffix array for sequence %s.\n",
                     records->names->strings[i]);
             delete_suffix_array(records->suffix_arrays[i]);
@@ -68,16 +68,16 @@ static char *make_file_name(const char *prefix,
     
     char *buffer = (char*)malloc(string_length);
     char *c = buffer;
-    for (int i = 0; i < prefix_length; i++, c++) {
+    for (size_t i = 0; i < prefix_length; i++, c++) {
         *c = prefix[i];
     }
     *c = '.'; c++;
-    for (int i = 0; i < suffix_length; i++, c++) {
+    for (size_t i = 0; i < suffix_length; i++, c++) {
         *c = suffix[i];
     }
     if (seq_suffix) {
         *c = '.'; c++;
-        for (int i = 0; i < seq_suffix_length; i++, c++) {
+        for (size_t i = 0; i < seq_suffix_length; i++, c++) {
             *c = seq_suffix[i];
         }
     }
@@ -94,7 +94,7 @@ int write_suffix_array_records(struct suffix_array_records *records,
 {
     fprintf(stderr, "Writing preprocessed data to files.\n");
     
-    for (int i = 0; i < records->names->used; i++) {
+    for (size_t i = 0; i < records->names->used; i++) {
         const char *seq_name = records->names->strings[i];
         struct suffix_array *sa = records->suffix_arrays[i];
         
@@ -111,7 +111,7 @@ int write_suffix_array_records(struct suffix_array_records *records,
     char *filename = make_file_name(filename_prefix, "c_tables", 0);
     fprintf(stderr, "writing c-table to %s.\n", filename);
     FILE *sa_file = fopen(filename, "w");
-    for (int i = 0; i < records->names->used; i++) {
+    for (size_t i = 0; i < records->names->used; i++) {
         size_t *c_table = records->suffix_arrays[i]->c_table;
         size_t  c_table_no_symbols = records->suffix_arrays[i]->c_table_no_symbols;
         char    *c_table_symbols = records->suffix_arrays[i]->c_table_symbols;
@@ -122,7 +122,7 @@ int write_suffix_array_records(struct suffix_array_records *records,
         
         fprintf(sa_file, "%s", records->names->strings[i]);
         fprintf(sa_file, " %lu", c_table_no_symbols);
-        for (int j = 0; j < c_table_no_symbols; j++) {
+        for (size_t j = 0; j < c_table_no_symbols; j++) {
             char symbol = c_table_symbols[j];
             fprintf(sa_file, " %c %lu", symbol, c_table[(size_t)symbol]);
         }
@@ -131,7 +131,7 @@ int write_suffix_array_records(struct suffix_array_records *records,
     fclose(sa_file);
     free(filename);
 
-    for (int i = 0; i < records->names->used; i++) {
+    for (size_t i = 0; i < records->names->used; i++) {
         const char *seq_name = records->names->strings[i];
         
         size_t *o_table = records->suffix_arrays[i]->o_table;
@@ -158,7 +158,7 @@ static int read_o_table_records(struct suffix_array_records *records,
 {
     assert(records->suffix_arrays != 0);
     
-    for (int i = 0; i < fasta_records->names->used; i++) {
+    for (size_t i = 0; i < fasta_records->names->used; i++) {
         const char *seq_name = fasta_records->names->strings[i];
         struct suffix_array *sa = records->suffix_arrays[i];
         char *filename = make_file_name(filename_prefix, "o_tables", seq_name);
@@ -219,8 +219,8 @@ static int read_c_table_records(struct suffix_array_records *records,
     }
     fprintf(stderr, "Reading c-table from %s.\n", filename);
     
-    int no_records = fasta_records->names->used;
-    for (int i = 0; i < no_records; i++) {
+    size_t no_records = fasta_records->names->used;
+    for (size_t i = 0; i < no_records; i++) {
         char seq_name[NAME_BUFFER_SIZE];
         fscanf(file, "%1024s", (char*)&seq_name);
         if (strcmp(seq_name, fasta_records->names->strings[i]) != 0) {
@@ -239,7 +239,7 @@ static int read_c_table_records(struct suffix_array_records *records,
         size_t  current_symbol_index = 0;
         char   *c_table_symbols = malloc(c_table_size);
         
-        for (int j = 0; j < c_table_size; j++) {
+        for (size_t j = 0; j < c_table_size; j++) {
             char symbol[NAME_BUFFER_SIZE]; size_t count;
             fscanf(file, "%1024s %lu", (char*)&symbol, &count);
             // the symbol should be '\0' or a single character
@@ -251,15 +251,15 @@ static int read_c_table_records(struct suffix_array_records *records,
                     (symbol_c == 0) ? '$' : symbol_c, count);
         }
         
-        int *c_table_symbols_inverse = calloc(C_TABLE_SIZE, sizeof(int));
-        for (int j = 0; j < c_table_no_symbols; j++) {
+        size_t *c_table_symbols_inverse = calloc(C_TABLE_SIZE, sizeof(size_t));
+        for (size_t j = 0; j < c_table_no_symbols; j++) {
             char symbol = c_table_symbols[j];
-            c_table_symbols_inverse[symbol] = j + 1;
+            c_table_symbols_inverse[(int)symbol] = j + 1;
         }
-        for (int j = 0; j < c_table_no_symbols; j++) {
+        for (size_t j = 0; j < c_table_no_symbols; j++) {
             char symbol = c_table_symbols[j];
-            int index = c_table_symbols_inverse[symbol];
-            fprintf(stderr, "symbol %c has index %d.\n",
+            size_t index = c_table_symbols_inverse[(int)symbol];
+            fprintf(stderr, "symbol %c has index %lu.\n",
                     (symbol == '\0') ? '$' : symbol, index - 1);
         }
         
@@ -285,13 +285,13 @@ int read_suffix_array_records(struct suffix_array_records *records,
                               struct fasta_records *fasta_records,
                               const char *filename_prefix)
 {
-    int no_records = fasta_records->names->used;
+    size_t no_records = fasta_records->names->used;
     assert(records->suffix_arrays == 0);
     
     records->suffix_arrays =
         (struct suffix_array**)malloc(sizeof(struct suffix_array*) * no_records);
     
-    for (int i = 0; i < fasta_records->names->used; i++) {
+    for (size_t i = 0; i < fasta_records->names->used; i++) {
         const char *seq_name = fasta_records->names->strings[i];
         size_t seq_length = fasta_records->seq_sizes->sizes[i];
         struct suffix_array *sa =

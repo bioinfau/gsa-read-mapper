@@ -17,7 +17,7 @@ struct suffix_array {
     size_t  *c_table;
     size_t   c_table_no_symbols;
     char    *c_table_symbols;
-    int     *c_table_symbols_inverse; // reverse map +1 (to recognize misses)
+    size_t  *c_table_symbols_inverse; // reverse map +1 (to recognize misses)
     size_t *o_table;
 };
 

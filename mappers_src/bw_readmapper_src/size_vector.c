@@ -3,7 +3,7 @@
 #include "size_vector.h"
 #include <stdlib.h>
 
-struct size_vector *empty_size_vector(int initial_size)
+struct size_vector *empty_size_vector(size_t initial_size)
 {
     struct size_vector *v = (struct size_vector*)malloc(sizeof(struct size_vector));
     v->sizes = (size_t*)malloc(initial_size*sizeof(size_t));

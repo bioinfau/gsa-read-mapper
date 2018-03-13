@@ -20,10 +20,12 @@ log_file=../test.log
 d=1
 
 # Reference genome
-reference=../data/gorGor3-small-noN.fa
+#reference=../data/gorGor3-small-noN.fa
+reference=../data/gorGor3-tiny-noN.fa
 
 # Reads
-reads=../data/sim-reads-d2-tiny.fq
+#reads=../data/sim-reads-d2-tiny.fq
+reads=../data/test.fq
 
 ## =============================================================
 

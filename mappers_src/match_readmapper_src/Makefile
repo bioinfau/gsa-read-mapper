@@ -1,11 +1,18 @@
+CFLAGS=-DEXTENDED_CIGAR -Wall -O3
+
 source_files = $(wildcard *.c)
 object_files = $(source_files:.c=.o)
 
 match_readmapper: $(object_files)
 	cc -o match_readmapper $(object_files)
 
+clean:
+	-rm match_readmapper
+	-rm *.o
+
 depend:
 	makedepend $(source_files)
+
 # DO NOT DELETE
 
 buffer.o: buffer.h

@@ -183,32 +183,32 @@ static void print_out_edges(struct trie *trie, FILE *dot_file)
     // node attributes
     if (trie->string_label >= 0) {
         fprintf(dot_file, "\"%p\" [label=\"%d\"];\n",
-                trie, trie->string_label);
+                (void*)trie, trie->string_label);
     } else {
-        fprintf(dot_file, "\"%p\" [label=\"\"];\n", trie);
+        fprintf(dot_file, "\"%p\" [label=\"\"];\n", (void*)trie);
     }
     
     // the out-edges
     struct trie *children = trie->children;
     while (children) {
         fprintf(dot_file, "\"%p\" -> \"%p\" [label=\"%c\"];\n",
-                trie, children, children->in_edge_label);
+                (void*)trie, (void*)children, children->in_edge_label);
         children = children->sibling;
     }
     // then failure and output links
     if (trie->failure_link) {
         fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dotted\", color=red];\n",
-                trie, trie->failure_link);
+                (void*)trie, (void*)trie->failure_link);
     }
     if (trie->output) {
         fprintf(dot_file, "\"%p\" [color=blue, shape=point];\n",
-                trie->output);
+                (void*)trie->output);
         fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
-                trie, trie->output, trie->output->string_label);
+                (void*)trie, (void*)trie->output, trie->output->string_label);
         struct output_list *list = trie->output;
         while (list->next) {
             fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
-                    list, list->next, list->next->string_label);
+                    (void*)list, (void*)list->next, list->next->string_label);
             list = list->next;
         }
     }

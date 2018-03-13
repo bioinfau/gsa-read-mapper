@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct string_vector *empty_string_vector(int initial_size)
+struct string_vector *empty_string_vector(size_t initial_size)
 {
     struct string_vector *v = (struct string_vector*)malloc(sizeof(struct string_vector));
     v->strings = (char**)malloc(initial_size*sizeof(char*));
@@ -16,7 +16,7 @@ struct string_vector *empty_string_vector(int initial_size)
 
 void delete_string_vector(struct string_vector *v)
 {
-    for (int i = 0; i < v->used; ++i)
+    for (size_t i = 0; i < v->used; ++i)
         free(v->strings[i]);
     free(v->strings);
     free(v);

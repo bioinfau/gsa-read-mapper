@@ -26,7 +26,7 @@ void push(struct stack *stack, int first, int second)
 }
 struct pair *top(struct stack *stack)
 {
-    assert(top >= 0);
+    assert(stack->top >= 0);
     return &stack->elements[stack->top];
 }
 void pop(struct stack *stack)

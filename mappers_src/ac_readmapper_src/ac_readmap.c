@@ -18,8 +18,8 @@
 #include <assert.h>
 
 struct search_info {
-    int edit_dist;
     struct fasta_records *records;
+    int edit_dist;
     FILE *sam_file;
 };
 

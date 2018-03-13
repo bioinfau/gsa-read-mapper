@@ -20,7 +20,7 @@ struct trie {
     struct output_list *output;
 };
 
-struct trie *empty_trie();
+struct trie *empty_trie(void);
 void delete_trie(struct trie *trie);
 
 void add_string_to_trie(struct trie *trie, const char *str, int string_label);

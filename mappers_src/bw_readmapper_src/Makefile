@@ -1,3 +1,5 @@
+CFLAGS=-DEXTENDED_CIGAR -Wall -O3
+
 source_files = $(wildcard *.c)
 object_files = $(source_files:.c=.o)
 

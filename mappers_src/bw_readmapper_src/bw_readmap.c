@@ -49,7 +49,7 @@ static void read_callback(const char *read_name,
                           void * callback_data) {
     struct search_info *info = (struct search_info*)callback_data;
     
-    size_t n = strlen(read) + info->max_edit_distance;
+    size_t n = strlen(read) + (size_t)info->max_edit_distance;
     char cigar[n + 1], cigar_buffer[n + 1];
     cigar[n] = cigar_buffer[n] = '\0';
     
