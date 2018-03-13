@@ -13,7 +13,7 @@ void search(const char *read_name, const char *read, size_t read_idx,
             struct suffix_array *sa,
             FILE *samfile)
 {
-#if 1
+#if 0
     printf("\"%s\" : \"%s\", d == %d, L == %lu, R == %lu, %lu\n",
            read, read + read_idx, d, L, R, read_idx);
     printf("cigar buffer = \"%s\".\n", cigar_buffer + 1);
@@ -25,52 +25,73 @@ void search(const char *read_name, const char *read, size_t read_idx,
         
         char a = read[read_idx - 1];
         size_t new_L, new_R;
-        
-        for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
-            char b = sa->c_table_symbols[i];
-            if (sa->c_table_symbols_inverse[b] == 0)
-                return; // no match with this character
+        if (L == 0)
+            new_L = sa->c_table[a] + 1;
+        else
+            new_L = sa->c_table[a] + 1 + sa->o_table[o_table_index(sa, a, L-1)];
+        new_R = sa->c_table[a] + sa->o_table[o_table_index(sa, a, R)];
+        if (new_L <= new_R) {
+            // match
+            *cigar_buffer = 'M';
+            search(read_name, read, read_idx - 1, quality,
+                   ref_name, new_L, new_R, d,
+                   cigar, cigar_buffer - 1,
+                   sa, samfile);
+        } else if (d > 0) {
+            // try substitutions
+            for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
+                char b = sa->c_table_symbols[i];
+                if (a == b) continue;
                 
-            if (L == 0)
-                new_L = sa->c_table[b] + 1;
-            else
-                new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
-            new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
-            
-            // matches/mismatches
-            if (a == b) {
-                *cigar_buffer = 'M';
-                search(read_name, read, read_idx - 1, quality,
-                       ref_name, new_L, new_R, d,
-                       cigar, cigar_buffer - 1,
-                       sa, samfile);
+                if (sa->c_table_symbols_inverse[b] == 0)
+                    return; // no match with this character
+                
+                if (L == 0)
+                    new_L = sa->c_table[b] + 1;
+                else
+                    new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
+                new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
+                
+                if (new_L <= new_R) {
+                    *cigar_buffer = 'M';
+                    search(read_name, read, read_idx - 1, quality,
+                           ref_name, new_L, new_R, d - 1,
+                           cigar, cigar_buffer - 1,
+                           sa, samfile);
+                }
             }
-            if (d > 0 && a != b) {
-                *cigar_buffer = 'M';
-                search(read_name, read, read_idx - 1, quality,
-                       ref_name, new_L, new_R, d - 1,
-                       cigar, cigar_buffer - 1,
-                       sa, samfile);
-            }
+                
+        }
             
-            // insertion -- use L and R adjusted with 'b' but do not decrease index
-            if (d > 0) {
+        
+        if (d > 0) {
+            // try insertions
+            for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
+                char b = sa->c_table_symbols[i];
+                if (sa->c_table_symbols_inverse[b] == 0)
+                    return; // no match with this character
+                
+                if (L == 0)
+                    new_L = sa->c_table[b] + 1;
+                else
+                    new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
+                new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
+                
                 *cigar_buffer = 'I';
                 search(read_name, read, read_idx, quality,
                        ref_name, new_L, new_R, d - 1,
                        cigar, cigar_buffer - 1,
                        sa, samfile);
             }
-        }
-
-        if (d > 0) {
-            // deletion -- just skip a character but continue with same L and R
+            
+            // try deletions
             *cigar_buffer = 'D';
             search(read_name, read, read_idx - 1, quality,
                    ref_name, L, R, d - 1,
                    cigar, cigar_buffer - 1,
                    sa, samfile);
         }
+        
         
     } else {
         // we have reached the beginning of the read -- report what we have found
