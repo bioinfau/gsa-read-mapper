@@ -201,14 +201,14 @@ static void print_out_edges(struct trie *trie, FILE *dot_file)
                 trie, trie->failure_link);
     }
     if (trie->output) {
-        fprintf(dot_file, "\"%p\" [label=\"\"];\n",
+        fprintf(dot_file, "\"%p\" [label=\"\", color=lightblue];\n",
                 trie->output);
         fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
                 trie, trie->output, trie->output->string_label);
         struct output_list *list = trie->output;
         while (list->next) {
             fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
-                    list, list->next, list->string_label);
+                    list, list->next, list->next->string_label);
             list = list->next;
         }
     }
