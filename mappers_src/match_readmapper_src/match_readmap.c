@@ -137,7 +137,7 @@ int main(int argc, char * argv[])
         { "algorithm",  required_argument,      NULL,           'a' },
         { NULL,         0,                      NULL,            0  }
     };
-    while ((opt = getopt_long(argc, argv, "hd:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hd:a:", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 printf("Usage: %s [options] ref.fa reads.fq\n\n", prog_name);
@@ -199,6 +199,9 @@ int main(int argc, char * argv[])
         search_info->match_func = suffix_array_bsearch_match;
     } else {
         fprintf(stderr, "Unknown search algorithm %s.\n", algorithm);
+        fclose(fasta_file);
+        fclose(fastq_file);
+        delete_search_info(search_info);
         return EXIT_FAILURE;
     }
     

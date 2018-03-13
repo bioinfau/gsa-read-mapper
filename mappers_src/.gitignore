@@ -3,5 +3,9 @@ match_readmapper
 ac_readmapper
 bw_readmapper
 foo.fa
-foo.fq
 foo.fa.*
+foo.fa
+foo.fq
+bar.fa
+bar.fa.*
+bar.fq
