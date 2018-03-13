@@ -86,8 +86,6 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
         // we have a new CIGAR for the same pattern.
         struct trie *node = get_trie_node(info->patterns_trie, pattern);
         add_string_copy_to_vector(info->cigars, node->string_label, cigar);
-        
-        //printf("adding %s [%s] with label %d\n", pattern, cigar, node->string_label);
 
     } else {
         // NB: the order is important here -- info->patterns->used will be updated
@@ -96,8 +94,6 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
         add_string_to_trie(info->patterns_trie, pattern, index);
         add_string_copy(info->patterns, pattern);
         add_string_copy_to_vector(info->cigars, index, cigar);
-        
-        //printf("appending %s [%s] with label %d\n", pattern, cigar, index);
     }
 }
 
@@ -133,8 +129,6 @@ static void read_callback(const char *read_name,
     
     generate_all_neighbours(read, "ACGT", search_info->edit_dist, build_trie_callback, info);
     compute_failure_links(info->patterns_trie);
-    
-    print_dot(info->patterns_trie, read_name);
     
     info->read_name = read_name;
     for (int i = 0; i < search_info->records->names->used; ++i) {

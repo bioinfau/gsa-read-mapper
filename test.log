@@ -1,0 +1,2 @@
+../data/gorGor3-small-noN.fa ../data/gorGor3-small-noN.fa.suffix_arrays
+./bw_readmapper.preprocess: line 9: bw_readmapper: command not found
