@@ -52,3 +52,8 @@ Mkfile.old
 dkms.conf
 
 Makefile.bak
+data/gorGor3-small-noN.fa.c_tables
+data/gorGor3-small-noN.fa.o_tables.chr1
+data/gorGor3-small-noN.fa.suffix_arrays.chr1
+mappers_src/bw_readmapper
+mappers_src/bw_readmapper_src/bw_readmapper
