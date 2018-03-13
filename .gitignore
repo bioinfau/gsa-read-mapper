@@ -53,3 +53,12 @@ dkms.conf
 
 Makefile.bak
 .DS_Store
+data/gorGor3-tiny-noN.fa.c_tables
+data/gorGor3-tiny-noN.fa.o_tables.chr1
+data/gorGor3-tiny-noN.fa.suffix_arrays.chr1
+evaluation/match_readmapper-approx.som
+mappers_src/bar-single.fa.c_tables
+mappers_src/bar-single.fa.o_tables.chr1
+mappers_src/bar-single.fa.suffix_arrays.chr1
+mappers_src/ac_readmapper_src/ac_readmapper.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+mappers_src/ac_readmapper_src/ac_readmapper.xcodeproj/project.xcworkspace/xcuserdata/mailund.xcuserdatad/WorkspaceSettings.xcsettings
