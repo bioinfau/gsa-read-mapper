@@ -65,7 +65,7 @@ void search(const char *read_name, const char *read, size_t read_idx,
             
         
         if (d > 0) {
-            // try insertions
+            // try deletion
             for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
                 char b = sa->c_table_symbols[i];
                 if (sa->c_table_symbols_inverse[b] == 0)
@@ -77,15 +77,15 @@ void search(const char *read_name, const char *read, size_t read_idx,
                     new_L = sa->c_table[b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
                 new_R = sa->c_table[b] + sa->o_table[o_table_index(sa, b, R)];
                 
-                *cigar_buffer = 'I';
+                *cigar_buffer = 'D';
                 search(read_name, read, read_idx, quality,
                        ref_name, new_L, new_R, d - 1,
                        cigar, cigar_buffer - 1,
                        sa, samfile);
             }
             
-            // try deletions
-            *cigar_buffer = 'D';
+            // try insertion
+            *cigar_buffer = 'I';
             search(read_name, read, read_idx - 1, quality,
                    ref_name, L, R, d - 1,
                    cigar, cigar_buffer - 1,
