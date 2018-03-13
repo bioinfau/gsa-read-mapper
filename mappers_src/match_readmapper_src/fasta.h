@@ -12,7 +12,7 @@ struct fasta_records {
     struct size_vector *seq_sizes;
 };
 
-struct fasta_records *empty_fasta_records();
+struct fasta_records *empty_fasta_records(void);
 void delete_fasta_records(struct fasta_records *records);
 
 int read_fasta_records(struct fasta_records *records, FILE *file);

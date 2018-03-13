@@ -199,6 +199,9 @@ int main(int argc, char * argv[])
         search_info->match_func = suffix_array_bsearch_match;
     } else {
         fprintf(stderr, "Unknown search algorithm %s.\n", algorithm);
+        fclose(fasta_file);
+        fclose(fastq_file);
+        delete_search_info(search_info);
         return EXIT_FAILURE;
     }
     
