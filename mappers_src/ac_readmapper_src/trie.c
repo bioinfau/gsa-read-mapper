@@ -201,7 +201,7 @@ static void print_out_edges(struct trie *trie, FILE *dot_file)
                 trie, trie->failure_link);
     }
     if (trie->output) {
-        fprintf(dot_file, "\"%p\" [label=\"\", color=lightblue];\n",
+        fprintf(dot_file, "\"%p\" [color=blue, shape=point];\n",
                 trie->output);
         fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
                 trie, trie->output, trie->output->string_label);

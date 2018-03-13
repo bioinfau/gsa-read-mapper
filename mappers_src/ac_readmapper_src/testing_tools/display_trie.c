@@ -19,7 +19,7 @@ int main(int argc, const char **argv)
 	FILE *infile = fopen(argv[1], "r");
 	
 	if (!infile) {
-		fprintf(stderr, "Could not open file %s\n", argv[0]);
+		fprintf(stderr, "Could not open file %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
 

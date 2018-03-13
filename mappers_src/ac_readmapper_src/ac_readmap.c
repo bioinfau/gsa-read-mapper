@@ -127,7 +127,9 @@ static void read_callback(const char *read_name,
     
     generate_all_neighbours(read, "ACGT", search_info->edit_dist, build_trie_callback, info);
     compute_failure_links(info->patterns_trie);
+#if 0
     print_dot(info->patterns_trie, read_name);
+#endif
     
     info->read_name = read_name;
     for (int i = 0; i < search_info->records->names->used; ++i) {
