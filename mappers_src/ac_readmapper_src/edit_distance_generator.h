@@ -13,5 +13,3 @@ void generate_all_neighbours(const char *pattern,
                              void *callback_data);
 
 #endif
-
-

@@ -7,6 +7,7 @@
 #include "fasta.h"
 #include "fastq.h"
 #include "sam.h"
+#include "string_vector_vector.h"
 #include "aho_corasick.h"
 #include "edit_distance_generator.h"
 
@@ -14,6 +15,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <assert.h>
 
 struct search_info {
     int edit_dist;
@@ -44,7 +46,7 @@ struct read_search_info {
     FILE *sam_file;
     
     struct string_vector *patterns;
-    struct string_vector *cigars;
+    struct string_vector_vector *cigars;
     struct trie *patterns_trie;
 };
 
@@ -59,7 +61,7 @@ static struct read_search_info *empty_read_search_info()
     info->quality = 0;
     
     info->patterns = empty_string_vector(256); // arbitrary start size...
-    info->cigars = empty_string_vector(256); // arbitrary start size...
+    info->cigars = empty_string_vector_vector(256); // arbitrary start size...
     info->patterns_trie = empty_trie();
     
     return info;
@@ -68,7 +70,7 @@ static struct read_search_info *empty_read_search_info()
 static void delete_read_search_info(struct read_search_info *info)
 {
     delete_string_vector(info->patterns);
-    delete_string_vector(info->cigars);
+    delete_string_vector_vector(info->cigars);
     delete_trie(info->patterns_trie);
     free(info);
 }
@@ -79,26 +81,36 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
     
     // patterns generated when we explore the neighbourhood of a read are not unique
     // so we need to check if we have seen it before
-    if (string_in_trie(info->patterns_trie, pattern))
-        return; // nothing to see here, move along.
-    
-    // NB: the order is important here -- info->patterns->used will be updated
-    // when we add the pattern to the vector, so we insert in the trie first.
-    add_string_to_trie(info->patterns_trie, pattern, info->patterns->used);
-    add_string_copy(info->patterns, pattern);
-    add_string_copy(info->cigars, cigar);
+    if (string_in_trie(info->patterns_trie, pattern)) {
+        // The pattern is already in the tree, but if we are called here
+        // we have a new CIGAR for the same pattern.
+        struct trie *node = get_trie_node(info->patterns_trie, pattern);
+        add_string_copy_to_vector(info->cigars, node->string_label, cigar);
+
+    } else {
+        // NB: the order is important here -- info->patterns->used will be updated
+        // when we add the pattern to the vector, so we insert in the trie first.
+        int index = append_vector(info->cigars);
+        add_string_to_trie(info->patterns_trie, pattern, index);
+        add_string_copy(info->patterns, pattern);
+        add_string_copy_to_vector(info->cigars, index, cigar);
+    }
 }
 
-static void match_callback(int label, size_t index, void * data)
+static void match_callback(int string_label, size_t index, void * data)
 {
     struct read_search_info *info = (struct read_search_info*)data;
-    size_t pattern_len = strlen(info->patterns->strings[label]); // FIXME: precompute
-    size_t start_index = index - pattern_len + 1 + 1; // +1 for arithmetic, +1 for 1-indexed
-    sam_line(info->sam_file,
-             info->read_name, info->ref_name, start_index,
-             info->cigars->strings[label],
-             info->read,
-             info->quality);
+    const char *str = info->patterns->strings[string_label];
+    struct string_vector *cigars = info->cigars->string_vectors[string_label];
+    size_t n = strlen(str);
+    size_t start_index = index - n + 1 + 1; // +1 for start correction and +1 for 1-indexed
+    for (int i = 0; i < cigars->used; i++) {
+        sam_line(info->sam_file,
+                 info->read_name, info->ref_name, start_index,
+                 cigars->strings[i],
+                 info->read,
+                 info->quality);
+    }
 }
 
 static void read_callback(const char *read_name,
