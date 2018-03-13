@@ -86,6 +86,8 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
         // we have a new CIGAR for the same pattern.
         struct trie *node = get_trie_node(info->patterns_trie, pattern);
         add_string_copy_to_vector(info->cigars, node->string_label, cigar);
+        
+        //printf("adding %s [%s] with label %d\n", pattern, cigar, node->string_label);
 
     } else {
         // NB: the order is important here -- info->patterns->used will be updated
@@ -94,19 +96,22 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
         add_string_to_trie(info->patterns_trie, pattern, index);
         add_string_copy(info->patterns, pattern);
         add_string_copy_to_vector(info->cigars, index, cigar);
+        
+        //printf("appending %s [%s] with label %d\n", pattern, cigar, index);
     }
 }
 
-static void match_callback(int label, size_t index, void * data)
+static void match_callback(int string_label, size_t index, void * data)
 {
     struct read_search_info *info = (struct read_search_info*)data;
-    size_t pattern_len = strlen(info->patterns->strings[label]);
-    size_t start_index = index - pattern_len + 1 + 1; // +1 for arithmetic, +1 for 1-indexed
-    struct string_vector *cigars = info->cigars->string_vectors[index];
-    for (size_t i = 0; i < cigars->used; i++) {
+    const char *str = info->patterns->strings[string_label];
+    struct string_vector *cigars = info->cigars->string_vectors[string_label];
+    size_t n = strlen(str);
+    size_t start_index = index - n + 1 + 1; // +1 for start correction and +1 for 1-indexed
+    for (int i = 0; i < cigars->used; i++) {
         sam_line(info->sam_file,
                  info->read_name, info->ref_name, start_index,
-                 cigars->strings[label],
+                 cigars->strings[i],
                  info->read,
                  info->quality);
     }
@@ -128,6 +133,8 @@ static void read_callback(const char *read_name,
     
     generate_all_neighbours(read, "ACGT", search_info->edit_dist, build_trie_callback, info);
     compute_failure_links(info->patterns_trie);
+    
+    print_dot(info->patterns_trie, read_name);
     
     info->read_name = read_name;
     for (int i = 0; i < search_info->records->names->used; ++i) {

@@ -44,13 +44,12 @@ static void match_callback(int string_label, size_t index, void * data)
 {
 	struct callback_data *cb_data = (struct callback_data*)data;
 	const char *str = cb_data->patterns->strings[string_label];
+	struct string_vector *cigars = cb_data->cigars->string_vectors[string_label];
 	size_t n = strlen(str);
-	printf("string \"%s\" [%d] matches at index %lu [%s].\n", 
-		str, string_label, index - n + 1, cb_data->database + index - n + 1);
-	struct string_vector *cigars = cb_data->cigars->string_vectors[index];
-	printf("\t%d matches:\n", cigars->used);
+	size_t start_index = index - n + 1;
 	for (size_t i = 0; i < cigars->used; i++) {
-		printf("\t\t%s\n", cigars->strings[i]);
+		printf("%s\t%s\tat [%lu]: %s\n", 
+			str, cigars->strings[i], start_index, cb_data->database + start_index);
 	}
 	
 }
@@ -85,13 +84,13 @@ int main(int argc, const char **argv)
 	while (fgets(buffer, MAX_LINE_SIZE, patterns_file) != 0) {
 		char pattern[MAX_LINE_SIZE], cigar[MAX_LINE_SIZE];
 		sscanf(buffer, "%s %s", (char*)&pattern, (char*)&cigar);
-        printf("adding \"%s\" [%s]\n", pattern, cigar);
-
+        
         if (string_in_trie(trie, pattern)) {
         	// The pattern is already in the tree, but if we are called here
         	// we have a new CIGAR for the same pattern.
         	struct trie *node = get_trie_node(trie, pattern);
         	add_string_copy_to_vector(cigars, node->string_label, cigar);
+        	printf("adding %5s [%5s] at index %d\n", pattern, cigar, node->string_label);
 
     	} else {
         	// NB: the order is important here -- info->patterns->used will be updated
@@ -100,6 +99,8 @@ int main(int argc, const char **argv)
         	add_string_to_trie(trie, pattern, index);
         	add_string_copy(patterns, pattern);
         	add_string_copy_to_vector(cigars, index, cigar);
+
+        	printf("adding %5s [%5s] at index %d\n", pattern, cigar, index);
     	}
 	}
     fclose(patterns_file);
