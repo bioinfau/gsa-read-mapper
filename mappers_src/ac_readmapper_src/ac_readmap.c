@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <assert.h>
 
 struct search_info {
     int edit_dist;
@@ -82,17 +83,26 @@ static void build_trie_callback(const char *pattern, const char *cigar, void * d
     if (string_in_trie(info->patterns_trie, pattern))
         return; // nothing to see here, move along.
     
+#if 0
+    fprintf(stderr, "adding \"%s\" (\"%s\") to trie.\n", pattern, cigar);
+#endif 
+    
     // NB: the order is important here -- info->patterns->used will be updated
     // when we add the pattern to the vector, so we insert in the trie first.
     add_string_to_trie(info->patterns_trie, pattern, info->patterns->used);
     add_string_copy(info->patterns, pattern);
     add_string_copy(info->cigars, cigar);
+    
+#if 0
+    // debug validation
+    assert(string_in_trie(info->patterns_trie, pattern));
+#endif
 }
 
 static void match_callback(int label, size_t index, void * data)
 {
     struct read_search_info *info = (struct read_search_info*)data;
-    size_t pattern_len = strlen(info->patterns->strings[label]); // FIXME: precompute
+    size_t pattern_len = strlen(info->patterns->strings[label]);
     size_t start_index = index - pattern_len + 1 + 1; // +1 for arithmetic, +1 for 1-indexed
     sam_line(info->sam_file,
              info->read_name, info->ref_name, start_index,
@@ -117,6 +127,7 @@ static void read_callback(const char *read_name,
     
     generate_all_neighbours(read, "ACGT", search_info->edit_dist, build_trie_callback, info);
     compute_failure_links(info->patterns_trie);
+    print_dot(info->patterns_trie, read_name);
     
     info->read_name = read_name;
     for (int i = 0; i < search_info->records->names->used; ++i) {

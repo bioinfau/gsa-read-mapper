@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 struct trie *empty_trie()
 {
@@ -177,4 +178,60 @@ void compute_failure_links(struct trie *trie)
     delete_queue(nodes);
 }
 
+static void print_out_edges(struct trie *trie, FILE *dot_file)
+{
+    // node attributes
+    if (trie->string_label >= 0) {
+        fprintf(dot_file, "\"%p\" [label=\"%d\"];\n",
+                trie, trie->string_label);
+    } else {
+        fprintf(dot_file, "\"%p\" [label=\"\"];\n", trie);
+    }
+    
+    // the out-edges
+    struct trie *children = trie->children;
+    while (children) {
+        fprintf(dot_file, "\"%p\" -> \"%p\" [label=\"%c\"];\n",
+                trie, children, children->in_edge_label);
+        children = children->sibling;
+    }
+    // then failure and output links
+    if (trie->failure_link) {
+        fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dotted\", color=red];\n",
+                trie, trie->failure_link);
+    }
+    if (trie->output) {
+        fprintf(dot_file, "\"%p\" [label=\"\"];\n",
+                trie->output);
+        fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
+                trie, trie->output, trie->output->string_label);
+        struct output_list *list = trie->output;
+        while (list->next) {
+            fprintf(dot_file, "\"%p\" -> \"%p\" [style=\"dashed\", color=blue, label=%d];\n",
+                    list, list->next, list->string_label);
+            list = list->next;
+        }
+    }
+    
+    // finally, recurse
+    children = trie->children;
+    while (children) {
+        print_out_edges(children, dot_file);
+        children = children->sibling;
+    }
+}
 
+void print_dot(struct trie *trie, const char *filename_prefix)
+{
+    size_t n = strlen(filename_prefix);
+    char filename[n + 4 + 1];
+    strcpy(filename, filename_prefix);
+    strcpy(filename + n, ".dot");
+    
+    FILE *file = fopen(filename, "w");
+    fprintf(file, "digraph {\n");
+    fprintf(file, "node[style=filled];\n");
+    print_out_edges(trie, file);
+    fprintf(file, "}\n");
+    fclose(file);
+}
