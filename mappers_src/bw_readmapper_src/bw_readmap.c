@@ -21,16 +21,18 @@ struct search_info {
     int edit_dist;
     struct fasta_records *fasta_records;
     struct suffix_array_records *sa_records;
+    int max_edit_distance;
     FILE *samfile;
 };
 
-static struct search_info *empty_search_info()
+static struct search_info *empty_search_info(int max_edit_distance)
 {
     struct search_info *info =
         (struct search_info*)malloc(sizeof(struct search_info));
     info->edit_dist = 0;
     info->fasta_records = empty_fasta_records();
     info->sa_records = empty_suffix_array_records();
+    info->max_edit_distance = max_edit_distance;
     return info;
 }
 
@@ -47,6 +49,10 @@ static void read_callback(const char *read_name,
                           void * callback_data) {
     struct search_info *info = (struct search_info*)callback_data;
     
+    size_t n = strlen(read) + info->max_edit_distance;
+    char cigar[n + 1], cigar_buffer[n + 1];
+    cigar[n] = cigar_buffer[n] = '\0';
+    
     size_t no_records = info->fasta_records->names->used;
     for (size_t seq_no = 0; seq_no < no_records; seq_no++) {
         char *ref_name = info->fasta_records->names->strings[seq_no];
@@ -55,6 +61,7 @@ static void read_callback(const char *read_name,
         search(read_name, read, strlen(read),
                quality,
                ref_name, 0, sa->length - 1, info->edit_dist,
+               cigar, cigar_buffer + n - 1,
                sa, info->samfile);
         
     }
@@ -259,7 +266,7 @@ int main(int argc, char * argv[])
             return EXIT_FAILURE;
         }
     
-        struct search_info *search_info = empty_search_info();
+        struct search_info *search_info = empty_search_info(edit_dist);
         search_info->edit_dist = edit_dist;
         
         if (0 != read_fasta_records(search_info->fasta_records, fasta_file)) {

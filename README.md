@@ -22,6 +22,7 @@ If all goes well, this should build three mappers in the directory `mappers_src`
  * `bwa` — the Burrows-Wheeler based read-mapper you experimented with in the first week’s exercises.
  * `match_readmapper` — A read-mapper based on constructing the edit-distance cloud around reads and searching for them with exact pattern matching algorithms. You can pick the algorithm to use via the `--algorithm` option.
  * `ac_readmapper` — Another read-mapper that builds the edit-distance cloud and search for matches this way, but using the Aho-Corsick algorithm for the search.
+ * `bw_readmapper` — A mapper that uses a recursive search via the Burrows-Wheeler matching algorithm.
 
 ### Adding your own mapper
 
@@ -41,15 +42,15 @@ If you invoke
 make test
 ```
 
-you will run the script [`evaluation/test_mapper.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers.sh). This script uses a reference implementation to build a SAM file and then it tests that all the other mappers specified in the script produce the same SAM file.
+you will run the scripts [`evaluation/test_mapper_exact.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_exact.sh) and [`evaluation/test_mapper_approximative.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_approximative.sh). This scripts use a reference implementation to build a SAM file and then it tests that all the other mappers specified in the script produce the same SAM file. As you probably have guessed from the names, the first script tests exact pattern matching and the second approximative pattern matching. You can also invoke them individually using `make test_exact` and `make test_approximative`. 
 
-You can modify the [header of the script](https://github.com/mailund/gsa-read-mapper/blob/a748068714fabeb8989382664c1dfea8e87fb79b/evaluation/test_mappers.sh#L3-L25) to configure how the tests are run.
+You can modify the [header of the scripts](https://github.com/mailund/gsa-read-mapper/blob/a748068714fabeb8989382664c1dfea8e87fb79b/evaluation/test_mappers.sh#L3-L25) to configure how the tests are run.
 
 The relevant variables you can modify are:
  * `ref_mapper` — this is the read-mapper the others will be compared against. If you do not change this variable, the reference read-mapper is `match_readmapper`. The performance of this mapper, however, is such that you cannot use for approximate pattern matching. It is simply too slow. So replace the reference when you test that your own mapper can find approximative matches. You can, for example, use the `ac_mapper` instead.
  * `mappers` — this is a list of the mappers to test against the reference. This is where you want to add your own read-mapper.
  * `report_file` and `log_file` determines where results and logging is written. There is no need to change these.
- * `d` — this is the maximum edit-distance to search in an approximate pattern matching. Unless you change it, it is set to zero, which means exact pattern matching. If you increase the distance, you probably want to use a different `ref_mapper`.
+ * `d` — this is the maximum edit-distance to search in an approximate pattern matching. In the exact pattern matching test, unless you change it, it is set to zero. If you increase the distance, you probably want to use a different `ref_mapper`.
  * `reference` — this is the file that contains the reference genome. Unless you change it, it is a short prefix of the gorilla chromosome 1 where I have replaced ’N’ characters with random ‘A’, ‘C’, ‘G’, or ’T’, characters.
  * `reads` — this is the file containing the reads. By default it is a file that contains 10 reads of length 10 that I have copied from the reference string and modified up to distance d=2.
 

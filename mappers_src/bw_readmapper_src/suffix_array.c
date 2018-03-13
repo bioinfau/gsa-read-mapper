@@ -19,6 +19,7 @@ struct suffix_array *empty_suffix_array()
     sa->c_table = 0;
     sa->c_table_no_symbols = 0;
     sa->c_table_symbols = 0;
+    sa->c_table_symbols_inverse = 0;
     
     sa->o_table = 0;
     
@@ -30,9 +31,6 @@ static struct suffix_array *allocate_sa(const char *string)
     struct suffix_array *sa = empty_suffix_array();
     sa->length = strlen(string) + 1; // + 1 for empty string
     sa->array = (size_t*)malloc(sa->length * sizeof(size_t));
-    
-    sa->c_table = 0;
-    sa->o_table = 0;
     
     return sa;
 }
