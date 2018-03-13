@@ -13,7 +13,7 @@ struct queue {
     struct linked_list *back;
 };
 
-struct queue *empty_queue();
+struct queue *empty_queue(void);
 void delete_queue(struct queue *queue);
 
 static inline bool queue_is_empty(const struct queue *queue) {
