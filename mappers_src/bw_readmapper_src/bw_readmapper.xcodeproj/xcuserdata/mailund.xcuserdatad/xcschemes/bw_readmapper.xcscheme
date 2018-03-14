@@ -69,11 +69,11 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/mailund/Projects/gsa-read-mapper/mappers_src/foo.fa"
+            argument = "/Users/mailund/Projects/gsa-read-mapper/data/gorGor3-small-noN.fa"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/mailund/Projects/gsa-read-mapper/mappers_src/foo.fq"
+            argument = "/Users/mailund/Projects/gsa-read-mapper/data/sim-reads-d2-tiny.fq"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

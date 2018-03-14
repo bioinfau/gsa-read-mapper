@@ -42,6 +42,35 @@ void search(const char *read_name, const char *read, size_t read_idx,
                      read,
                      quality);
         }
+        
+        // For completeness of the d-edit-cloud, we still need to
+        // explore deletions...
+        // ---DELETION----------------------------------------------
+        if (d > 0) {
+            size_t new_L, new_R;
+            for (size_t i = 0; i < sa->c_table_no_symbols; i++) {
+                char b = sa->c_table_symbols[i];
+                if (sa->c_table_symbols_inverse[(int)b] == 0)
+                    return; // no match with this character
+                
+                if (L == 0)
+                    new_L = sa->c_table[(int)b] + 1;
+                else
+                    new_L = sa->c_table[(int)b] + 1 + sa->o_table[o_table_index(sa, b, L-1)];
+                new_R = sa->c_table[(int)b] + sa->o_table[o_table_index(sa, b, R)];
+                
+                if (new_L > new_R) continue;
+                
+                *cigar_buffer = 'D';
+                *match_buffer = b; // FIXME
+                search(read_name, read, read_idx, quality,
+                       ref_name, new_L, new_R, d - 1,
+                       cigar, cigar_buffer - 1,
+                       match_buffer - 1,
+                       sa, samfile);
+            }
+        }
+        
         return; // all done.
     }
     
