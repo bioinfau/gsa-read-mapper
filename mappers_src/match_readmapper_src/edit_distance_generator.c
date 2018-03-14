@@ -19,11 +19,25 @@ static void recursive_generator(const char *pattern, char *buffer, char *cigar,
                                 void *callback_data)
 {
     if (*pattern == '\0') {
-        // no more pattern to match ... terminate the buffer and call back
+        // no more pattern to match ... 
+        
+        // with no more edits: terminate the buffer and call back
         *buffer = '\0';
         *cigar = '\0';
         simplify_cigar(data->cigar_front, data->simplify_cigar_buffer);
         callback(data->buffer_front, data->simplify_cigar_buffer, callback_data);
+
+        // if we have more edits left, we add some deletions
+        if (max_edit_distance > 0) {
+            for (const char *a = data->alphabet; *a; a++) {
+                *buffer = *a;
+                *cigar = 'D';
+                recursive_generator(pattern, buffer + 1, cigar + 1,
+                                    max_edit_distance - 1, data,
+                                    callback, callback_data);
+            }
+        }
+        
         
     } else if (max_edit_distance == 0) {
         // we can't edit any more, so just move pattern to buffer and call back

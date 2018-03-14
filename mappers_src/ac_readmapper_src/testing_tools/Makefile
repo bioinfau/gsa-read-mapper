@@ -1,4 +1,4 @@
-CFLAGS=-Wall 
+CFLAGS=-Wall -DEXTENDED_CIGAR
 
 all: display_trie ac_search edit_cloud
 
