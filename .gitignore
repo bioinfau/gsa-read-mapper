@@ -57,3 +57,11 @@ data/gorGor3-small-noN.fa.o_tables.chr1
 data/gorGor3-small-noN.fa.suffix_arrays.chr1
 mappers_src/bw_readmapper
 mappers_src/bw_readmapper_src/bw_readmapper
+data/gorGor3-tiny-noN.fa
+data/gorGor3-tiny-noN.fa.c_tables
+data/gorGor3-tiny-noN.fa.o_tables.chr1
+data/gorGor3-tiny-noN.fa.suffix_arrays.chr1
+data/test.fq
+mappers_src/bar-single.fa.c_tables
+mappers_src/bar-single.fa.o_tables.chr1
+mappers_src/bar-single.fa.suffix_arrays.chr1
