@@ -37,7 +37,7 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
     
     // copy the name from the header
     char *header  = strtok(buffer+1, "\n");
-    char *name = string_copy(header);
+    char *name = string_copy(trim_whitespace(header));
     
     while (fgets(buffer, MAX_LINE_SIZE, file) != 0) {
         
