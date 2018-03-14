@@ -1,3 +1,4 @@
+CFLAGS=-Wall
 
 all: display_trie ac_search edit_cloud
 
@@ -15,3 +16,9 @@ ac_search: ac_search.o ../trie.o ../queue.o ../strings.o ../string_vector.o ../s
 
 edit_cloud: edit_cloud.o ../edit_distance_generator.o ../cigar.o
 	cc -o edit_cloud edit_cloud.o ../edit_distance_generator.o ../cigar.o
+
+clean:
+	-rm *.o
+	-rm display_trie
+	-rm ac_search
+	-rm edit_cloud

@@ -11,7 +11,7 @@ int main(int argc, const char **argv)
 	struct trie *trie = empty_trie();
 
 	if (argc != 2) {
-		fprintf(stderr, "Usage: %s input-file\n", argv[0]);
+		fprintf(stderr, "Usage: %s patterns-file\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
@@ -23,12 +23,19 @@ int main(int argc, const char **argv)
 		return EXIT_FAILURE;
 	}
 
+	size_t string_label = 0;
 	char buffer[MAX_LINE_SIZE];
-	int string_label = 0;
 	while (fgets(buffer, MAX_LINE_SIZE, infile) != 0) {
-		char *str = string_copy(strtok(buffer, "\n"));
-        printf("adding \"%s\"\n", str);
-        add_string_to_trie(trie, str, string_label++);
+		char pattern[MAX_LINE_SIZE], cigar[MAX_LINE_SIZE];
+		sscanf(buffer, "%s %s", (char*)&pattern, (char*)&cigar);
+        printf("adding \"%s\"\n", pattern);
+
+        if (string_in_trie(trie, pattern)) {
+        	printf("...already in trie.\n");
+        } else {
+        	add_string_to_trie(trie, pattern, string_label++);
+        }
+        
 	}
     fclose(infile);
 
