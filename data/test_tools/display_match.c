@@ -44,16 +44,16 @@ static const char *cigar_alignment(const char *cigar,
             case 'I':
                 // insertion
                 for (int i = 0; i < count; i++) {
-                    *(match_buffer++) = *(matched_seq++);
-                    *(pattern_buffer++) = '-';
+                    *(match_buffer++) = '-';
+                    *(pattern_buffer++) = *(pattern++);
                 }
                 break;
                 
             case 'D':
                 // deletion
                 for (int i = 0; i < count; i++) {
-                    *(match_buffer++) = '-';
-                    *(pattern_buffer++) = *(pattern++);
+                    *(match_buffer++) = *(matched_seq++);
+                    *(pattern_buffer++) = '-';
                 }
                 break;
                 
