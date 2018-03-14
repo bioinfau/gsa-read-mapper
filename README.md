@@ -129,7 +129,7 @@ To evaluate the relative performance of the read-mappers you can invoke
 make evaluate
 ```
 
-This will run the script [`evaluation/evaluate_mappers.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/evaluate_mappers.sh). As with the test script, you can modify [the header of this script](https://github.com/mailund/gsa-read-mapper/blob/11dd0116fb8bf35c976162beb1a56dfddfb9b521/evaluation/evaluate_mappers.sh#L3-L25) to configure how the performance evaluations are done.
+This will run the scripts [`evaluation/evaluate_mappers_exact.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_exact.sh) and [`evaluate/evaluate_mappers_approximative.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_approximative.sh). As with the test scripts, you can modify the header of this scripts to configure how the performance evaluations are done.
 
 Most of the variables you can change are the same as for the test script, but you do not need a reference mapper for this script. All the mappers you list in the `mappers` variable will be run but the output files will not be compared. To add your own read-mapper to the performance evaluation, you just have to add it to this list. The only new variable is `N` that determines how many times you run each mapper.
 
@@ -188,7 +188,13 @@ You can use these scripts to create more data files to test against. You can get
 
 ## Evaluation
 
-The current status of the read-mappers are:
+The current status of the read-mappers…
 
-![](evaluation-report.txt.png)
+### Exact matching
+
+![](evaluation-report-exact.txt.png)
+
+### Approximative matching
+
+![](evaluation-report-approximative.txt.png)
 

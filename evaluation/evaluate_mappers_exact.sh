@@ -10,8 +10,8 @@ export PATH=../mappers_src:$PATH
 mappers="bwa match_readmapper ac_readmapper bw_readmapper"
 
 # file name for report
-report_file=../evaluation-report.txt
-log_file=../evaluation.log
+report_file=../evaluation-report-exact.txt
+log_file=../evaluation-exact.log
 
 # max edit distance to explore
 d=0

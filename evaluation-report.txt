@@ -1,8 +1,0 @@
-mapper                 time
-bwa                    0.38
-bwa                    0.10
-bwa                    0.10
-bwa                    0.09
-bwa                    0.09
-match_readmapper       6.21
-match_readmapper       6.10
