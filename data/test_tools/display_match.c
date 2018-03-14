@@ -13,23 +13,30 @@
 #define MAX_LINE_SIZE 10000
 #define BUFFER_SIZE 1024
 
-static bool parse_sam_line(const char *line_buffer,
+static void parse_sam_line(const char *line_buffer,
                            char *read_name_buffer, char *ref_name_buffer, int *match_index,
                            char *cigar_buffer, char *pattern_buffer)
 {
-    return sscanf(line_buffer, "%s %*d %s %d %*d %s * %*d %*d %s %*s\n",
-                  read_name_buffer, ref_name_buffer, match_index, cigar_buffer, pattern_buffer);
+    int no_matched = sscanf(line_buffer, "%s %*d %s %d %*d %s * %*d %*d %s %*s\n",
+                            read_name_buffer, ref_name_buffer, match_index, cigar_buffer, pattern_buffer);
+    if (no_matched != 5) {
+        fprintf(stderr, "Couldn't parse line \"%s\"\n", line_buffer);
+        exit(EXIT_FAILURE);
+    }
 }
 
 static const char *cigar_alignment(const char *cigar,
-                            const char *pattern,
-                            const char *matched_seq,
-                            char *pattern_buffer,
-                            char *match_buffer)
+                                   const char *pattern,
+                                   const char *matched_seq,
+                                   char *pattern_buffer,
+                                   char *match_buffer)
 {
     int count; char op;
     while (*cigar) {
-        cigar += sscanf(cigar, "%d%c", &count, &op);
+        int no_chars_scanned;
+        int matched_tokens = sscanf(cigar, "%d%c%n", &count, &op, &no_chars_scanned);
+        if (matched_tokens != 2) break;
+        cigar += no_chars_scanned; // FIXME:
         switch (op) {
             case '=':
             case 'X':
@@ -131,28 +138,10 @@ static void display_match(const char *pattern, const char *cigar,
     
     const char * matched_seq = ref_seq + (size_t)match_index - 1; // -1 for zero-termination
     size_t pattern_length = strlen(pattern);
-    char pattern_buffer[2 * pattern_length];
-    char match_buffer[2 * pattern_length];
+    char pattern_buffer[2 * pattern_length]; bzero(pattern_buffer, sizeof(pattern_buffer));
+    char match_buffer[2 * pattern_length]; bzero(match_buffer, sizeof(match_buffer));
     const char *match_end = cigar_alignment(cigar, pattern, matched_seq,
                                             (char*)&pattern_buffer, (char*)&match_buffer);
-    
-#if 0
-    printf("-------------------------\n");
-    printf("%s\n", ref_seq);
-    for (int i = 0; i < match_index - 1; i++) {
-        printf(" ");
-    }
-    size_t match_length = strlen(pattern); // fixme
-    for (size_t i = 0; i < match_length; i++) {
-        printf("^");
-    }
-    printf("\n");
-    for (const char *c = ref_seq; c < match_end; c++) {
-        printf(" ");
-    }
-    printf("^\n");
-    printf("-------------------------\n");
-#endif
     
     printf("...");
     print_flanking_dots(ref_seq + MIN(match_index - 1, match_index - 1 - flanking_seq_length), matched_seq);

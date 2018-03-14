@@ -63,6 +63,16 @@
             ReferencedContainer = "container:test_tools.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/Users/mailund/Projects/gsa-read-mapper/data/gorGor3-small-noN.fa"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/mailund/Projects/gsa-read-mapper/mappers_src/test.sam"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
