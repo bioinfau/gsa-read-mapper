@@ -49,7 +49,7 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
             n = 0;
             
             header  = strtok(buffer+1, "\n");
-            name = string_copy(header);
+            name = string_copy(trim_whitespace(header));
             
             continue;
         }
