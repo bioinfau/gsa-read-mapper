@@ -52,6 +52,7 @@ static void read_callback(const char *read_name,
     size_t n = strlen(read) + (size_t)info->max_edit_distance;
     char cigar[n + 1], cigar_buffer[n + 1];
     cigar[n] = cigar_buffer[n] = '\0';
+    char match_buffer[n + 1]; match_buffer[n] = '\0';//FIXME: debug
     
     size_t no_records = info->fasta_records->names->used;
     for (size_t seq_no = 0; seq_no < no_records; seq_no++) {
@@ -62,6 +63,7 @@ static void read_callback(const char *read_name,
                quality,
                ref_name, 0, sa->length - 1, info->edit_dist,
                cigar, cigar_buffer + n - 1,
+               match_buffer + n - 1, // FIXME: debug
                sa, info->samfile);
         
     }

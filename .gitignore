@@ -71,3 +71,8 @@ mappers_src/gorGor3-tiny-noN.fa.c_tables
 mappers_src/gorGor3-tiny-noN.fa.o_tables.chr1
 mappers_src/gorGor3-tiny-noN.fa.suffix_arrays.chr1
 mappers_src/test.fq
+mappers_src/ac-small.sam
+mappers_src/bw-small.sam
+mappers_src/head-ac-small.sam
+mappers_src/head-bw-small.sam
+mappers_src/test2.fq
