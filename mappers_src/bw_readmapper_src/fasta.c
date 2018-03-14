@@ -24,26 +24,6 @@ void delete_fasta_records(struct fasta_records *records)
     free(records);
 }
 
-static char *trim(char *str)
-{
-    char *end;
-    
-    // Trim leading space
-    while(isspace((unsigned char)*str)) str++;
-    
-    if(*str == 0)  // All spaces?
-        return str;
-    
-    // Trim trailing space
-    end = str + strlen(str) - 1;
-    while(end > str && isspace((unsigned char)*end)) end--;
-    
-    // Write new null terminator
-    *(end+1) = 0;
-    
-    return str;
-}
-
 #define MAX_LINE_SIZE 1024
 int read_fasta_records(struct fasta_records *records, FILE *file)
 {
@@ -56,8 +36,8 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
     char *seq = malloc(seq_size);
     
     // copy the name from the header
-    char *header  = trim(strtok(buffer+1, "\n"));
-    char *name = string_copy(header);
+    char *header  = strtok(buffer+1, "\n");
+    char *name = string_copy(trim_whitespace(header));
     
     while (fgets(buffer, MAX_LINE_SIZE, file) != 0) {
         
@@ -74,8 +54,7 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
             continue;
         }
         
-        char *c;
-        for (c = buffer; *c; ++c) {
+        for (char *c = buffer; *c; ++c) {
             if (!isalpha(*c)) continue;
             
             seq[n++] = *c;
@@ -85,7 +64,6 @@ int read_fasta_records(struct fasta_records *records, FILE *file)
                 seq = (char*)realloc(seq, seq_size);
             }
         }
-        seq[n] = 0;
     }
     
     // handle last record...
