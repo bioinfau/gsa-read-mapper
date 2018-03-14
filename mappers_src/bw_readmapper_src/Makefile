@@ -16,14 +16,17 @@ depend:
 # DO NOT DELETE
 
 bw_readmap.o: suffix_array.h suffix_array_records.h fasta.h string_vector.h
-bw_readmap.o: size_vector.h fastq.h sam.h
+bw_readmap.o: size_vector.h fastq.h sam.h search.h
+cigar.o: cigar.h
 fasta.o: fasta.h string_vector.h size_vector.h strings.h
 fastq.o: fastq.h strings.h
 pair_stack.o: pair_stack.h
 sam.o: sam.h
+search.o: search.h suffix_array_records.h fasta.h string_vector.h
+search.o: size_vector.h suffix_array.h sam.h cigar.h strings.h
 size_vector.o: size_vector.h
 string_vector.o: string_vector.h strings.h
 strings.o: strings.h
 suffix_array.o: suffix_array.h strings.h pair_stack.h
 suffix_array_records.o: suffix_array_records.h fasta.h string_vector.h
-suffix_array_records.o: size_vector.h
+suffix_array_records.o: size_vector.h suffix_array.h
