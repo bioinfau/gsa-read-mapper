@@ -15,6 +15,7 @@ depend: $(source_files)
 
 # DO NOT DELETE
 
+display_match.o: fasta.h string_vector.h size_vector.h
 fasta.o: fasta.h string_vector.h size_vector.h strings.h
 size_vector.o: size_vector.h
 string_vector.o: string_vector.h strings.h
