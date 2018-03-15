@@ -1,5 +1,5 @@
-#include "../trie.h"
-#include "../strings.h"
+#include "trie.h"
+#include "strings.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +17,7 @@ int main(int argc, const char **argv)
 
 	// read lines from input file and put them in the trie
 	FILE *infile = fopen(argv[1], "r");
-	
+
 	if (!infile) {
 		fprintf(stderr, "Could not open file %s\n", argv[1]);
 		return EXIT_FAILURE;
@@ -33,9 +33,9 @@ int main(int argc, const char **argv)
         if (string_in_trie(trie, pattern)) {
         	printf("...already in trie.\n");
         } else {
-        	add_string_to_trie(trie, pattern, string_label++);
+        	add_string_to_trie(trie, pattern, (int)string_label++);
         }
-        
+
 	}
     fclose(infile);
 

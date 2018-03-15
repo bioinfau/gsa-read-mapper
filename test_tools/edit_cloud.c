@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../edit_distance_generator.h"
+#include "edit_distance_generator.h"
 
 static void callback(const char *string, const char *cigar, void * data)
 {
