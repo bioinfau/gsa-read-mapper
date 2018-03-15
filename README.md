@@ -188,6 +188,10 @@ In addition to the data files there are two scripts:
 
 You can use these scripts to create more data files to test against. You can get all the genomes you can eat at the [UCSC Genome Browser](http://hgdownload.soe.ucsc.edu/downloads.html). For example, you can get the latest gorilla reference genome, [gorGor5.fa.gz](http://hgdownload.soe.ucsc.edu/goldenPath/gorGor5/bigZips/gorGor5.fa.gz). It isn’t that different from the `gorGor3` I have added to the repository, but if you download it from the genome browser you get the entire genome and not a short prefix of chromosome 1.
 
+## Test tools
+
+In the [test_tools/](https://github.com/mailund/gsa-read-mapper/tree/master/test_tools) directory you will find various tools that might be useful when you test and debug your read-mapper. I know they were for me; after all, I built them to assist me in writing my own read-mappers.
+
 ## Evaluation
 
 The current status of the read-mappers…
