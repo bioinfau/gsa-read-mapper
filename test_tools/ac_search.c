@@ -102,7 +102,6 @@ int main(int argc, const char** argv)
             struct trie* node = get_trie_node(trie, pattern);
             assert(node->string_label >= 0);
             add_string_copy_to_vector(cigars, (size_t)node->string_label, cigar);
-            printf("adding %5s [%5s] at index %d\n", pattern, cigar, node->string_label);
         }
         else
         {
@@ -112,16 +111,12 @@ int main(int argc, const char** argv)
             add_string_to_trie(trie, pattern, (int)index);
             add_string_copy(patterns, pattern);
             add_string_copy_to_vector(cigars, index, cigar);
-
-            printf("adding %5s [%5s] at index %lu\n", pattern, cigar, index);
         }
     }
     fclose(patterns_file);
 
-    printf("computing failure links.\n");
     compute_failure_links(trie);
 
-    printf("searching...\n");
     struct callback_data cb_data;
     cb_data.patterns = patterns;
     cb_data.cigars = cigars;
