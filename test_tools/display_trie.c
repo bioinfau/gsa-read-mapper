@@ -25,29 +25,26 @@ int main(int argc, const char** argv)
         return EXIT_FAILURE;
     }
 
+    printf("Building trie.\n");
     size_t string_label = 0;
     char buffer[MAX_LINE_SIZE];
     while (fgets(buffer, MAX_LINE_SIZE, infile) != 0)
     {
         char pattern[MAX_LINE_SIZE], cigar[MAX_LINE_SIZE];
         sscanf(buffer, "%s %s", (char*)&pattern, (char*)&cigar);
-        printf("adding \"%s\"\n", pattern);
-
-        if (string_in_trie(trie, pattern))
-        {
-            printf("...already in trie.\n");
-        }
-        else
-        {
+        
+        if (string_in_trie(trie, pattern)) {
+            string_label++; // still increase to make the labels match
+        } else {
             add_string_to_trie(trie, pattern, (int)string_label++);
         }
     }
     fclose(infile);
 
-    printf("computing failure links.\n");
+    printf("Computing failure links.\n");
     compute_failure_links(trie);
 
-    printf("printing trie graph to \"trie.dot\"\n");
+    printf("Printing trie graph to \"trie.dot\"\n");
     print_dot(trie, "trie");
 
     return EXIT_SUCCESS;
