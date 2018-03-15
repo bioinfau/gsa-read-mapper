@@ -190,7 +190,7 @@ You can use these scripts to create more data files to test against. You can get
 
 ## Test tools
 
-In the [test_tools/](https://github.com/mailund/gsa-read-mapper/tree/master/test_tools) directory you will find various tools that might be useful when you test and debug your read-mapper. I know they were for me; after all, I built them to assist me in writing my own read-mappers.
+In the [test_tools/](https://github.com/mailund/gsa-read-mapper/tree/master/test_tools) directory you will find various tools that might be useful when you test and debug your read-mapper. I know they were for me; after all, I built them to assist me in writing my own read-mappers. You will find a description of the tools in the [README](https://github.com/mailund/gsa-read-mapper/tree/master/test_tools) file in the directory.
 
 ## Evaluation
 
