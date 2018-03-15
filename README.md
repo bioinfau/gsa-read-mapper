@@ -50,7 +50,7 @@ If you invoke
 make test
 ```
 
-you will run the scripts [`evaluation/test_mapper_exact.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_exact.sh) and [`evaluation/test_mapper_approximative.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_approximative.sh). This scripts use a reference implementation to build a SAM file and then it tests that all the other mappers specified in the script produce the same SAM file. As you probably have guessed from the names, the first script tests exact pattern matching and the second approximative pattern matching. You can also invoke them individually using `make test_exact` and `make test_approximative`. 
+you will run the scripts [`evaluation/test_mapper_exact.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_exact.sh) and [`evaluation/test_mapper_approximative.sh`](https://github.com/mailund/gsa-read-mapper/blob/master/evaluation/test_mappers_approximative.sh). These scripts use a reference implementation to build a SAM file and then it tests that all the other mappers specified in the script produce the same SAM file. As you probably have guessed from the names, the first script tests exact pattern matching and the second approximative pattern matching. You can also invoke them individually using `make test_exact` and `make test_approximative` or, of course, by simply executing the scripts.
 
 You can modify the [header of the scripts](https://github.com/mailund/gsa-read-mapper/blob/a748068714fabeb8989382664c1dfea8e87fb79b/evaluation/test_mappers.sh#L3-L25) to configure how the tests are run.
 
@@ -163,15 +163,17 @@ The preprocessing- and run-scripts are also used by the evaluation script. The s
 
 A successful evaluation should look something like this:
 
-![](images/sucessful-evaluation.png)
+![](images/sucessful-evaluation-exact.png)
 
-Here, we see that the fastest mapper, not surprisingly, is `bwa`, then the `match_readmapper` and slowest is the `ac_readmapper`. This is slightly misleading, though; the `match_readmapper` is faster than the `ac_readmapper` when `d` is zero. When we are searching for one read at a time, the benefits of the Aho-Corsick algorithm are not present but the overhead is. Setting `d` to one, however, will make the script unreasonably slow, so remove `match_readmapper` before you do that. Or don’t and learn the hard way that I am right.
+Here, we see that the fastest mapper, not surprisingly, is `bwa`, then the `match_readmapper` followed by the other two. This is slightly misleading, though; the `match_readmapper` is slightly faster than the `bw_readmapper` and much faster than the `ac_readmapper` when `d` is zero. When we are searching for one read at a time, the benefits of the Burrows-Wheeler and Aho-Corsick algorithms are not present but the overhead is. Setting `d` to one, however, will make the script unreasonably slow. The `evaluate_mappers_approximative.sh` script uses a default of `d=1` and excludes `match_readmapper`. With a small enough data set you can try to add `match_readmapper` to it and see how it goes.
+
+![](images/successful-evaluation-approximative.png)
 
 ### Plotting the performance evaluation
 
-If you have `R` installed, the evaluation script will use it to plot the performance results. You should get a plot that looks like the one at the bottom of this page. Actually, if you use git and push changes to GitHub, the plot at the bottom of this page *is* the results of the last evaluation you ran.
+If you have `R` installed, the evaluation scripts will use it to plot the performance results. You should get a plot that looks like the ones at the bottom of this page. Actually, if you use git and push changes to GitHub, the plots at the bottom of this page *are* the results of the last evaluation you ran.
 
-In the plot, all times are normalised by dividing by the mean running time of the fastest mapper — if you haven’t modified the list of mappers, this is likely to be `bwa` — so running times, shown on the y-axis, are measured in factors of the fastest mapper. So, if your mapper is plotted at y=100 it means that it is one hundred times slower than the fastest.
+In the plots, all times are normalised by dividing by the mean running time of the fastest mapper — if you haven’t modified the list of mappers, this is likely to be `bwa` — so running times, shown on the y-axis, are measured in factors of the fastest mapper. This means that if your mapper is plotted at y=100 it means that it is one hundred times slower than the fastest.
 
 ## The data files
 

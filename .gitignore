@@ -76,3 +76,6 @@ mappers_src/bw-small.sam
 mappers_src/head-ac-small.sam
 mappers_src/head-bw-small.sam
 mappers_src/test2.fq
+
+*.log
+*.bak
