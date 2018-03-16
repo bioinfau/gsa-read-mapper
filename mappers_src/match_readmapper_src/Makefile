@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O3
+CFLAGS=-Wall -O3 -std=c99
 
 source_files = $(wildcard *.c)
 object_files = $(source_files:.c=.o)
