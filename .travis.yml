@@ -9,4 +9,4 @@ os:
 
 script:
   - make mappers
-  - make tests
+  - make test

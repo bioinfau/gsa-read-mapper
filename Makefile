@@ -5,7 +5,8 @@ all: mappers test test evaluate
 mappers:
 	cd mappers_src && make
 
-test: test_exact test_approximative
+test: tests
+tests: test_exact test_approximative
 
 test_exact: mappers
 	(export PATH=mappers_src:${PATH} ; cd evaluation && ./test_mappers_exact.sh)

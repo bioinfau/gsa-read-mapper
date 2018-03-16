@@ -1,5 +1,8 @@
 # Read-mapper project for Genome Scale Algorithms
 
+[![Travis build
+status](https://travis-ci.org/mailund/gsa-read-mapper.svg?branch=master)](https://travis-ci.org/mailund/gsa-read-mapper)
+
 We have written some scripts and read mappers you can use to test your own program and evaluate its performance. To use these scripts and program you need a setup with `make`, `bash`, a C compiler (by default, we assume it is named `cc`), and if you want to create plots of relative performance, and installation of [`R`](https://www.r-project.org).
 
 On a Linux machine, most likely these tools are available by default. On a Windows machine, you can install [Cygwin](https://www.cygwin.com) to get them. On macOS, you can install the setup from the command-line tools in Xcode.
@@ -44,7 +47,7 @@ the build setup will enter all directories that ends in `_src` and call `make` i
 
 ### Testing mappers
 
-If you invoke 
+If you invoke
 
 ```sh
 make test
@@ -203,4 +206,3 @@ The current status of the read-mappers…
 ### Approximative matching
 
 ![](evaluation-report-approximative.txt.png)
-
