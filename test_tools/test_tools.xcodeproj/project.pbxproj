@@ -25,6 +25,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3260AA9D205BFDC500593C4B /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 3260AA9B205BFDC500593C4B /* options.c */; };
+		3260AA9E205BFDC500593C4B /* options.h in Headers */ = {isa = PBXBuildFile; fileRef = 3260AA9C205BFDC500593C4B /* options.h */; };
 		32A4576D205AAF4F00D8D78F /* strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 32D6D51520590F8000B928EF /* strings.c */; };
 		32A4576F205AAF4F00D8D78F /* size_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 32D6D51120590EFF00B928EF /* size_vector.c */; };
 		32A45771205AAF4F00D8D78F /* string_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 32D6D51020590EFF00B928EF /* string_vector.c */; };
@@ -129,6 +131,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3260AA9B205BFDC500593C4B /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = "<group>"; };
+		3260AA9C205BFDC500593C4B /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
 		32A45769205AAF3C00D8D78F /* libgsa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgsa.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A45776205AAF7600D8D78F /* trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trie.c; sourceTree = "<group>"; };
 		32A45777205AAF7600D8D78F /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = queue.c; sourceTree = "<group>"; };
@@ -206,6 +210,8 @@
 		32A4578E205AAF8400D8D78F /* libgsa */ = {
 			isa = PBXGroup;
 			children = (
+				3260AA9B205BFDC500593C4B /* options.c */,
+				3260AA9C205BFDC500593C4B /* options.h */,
 				32A4577E205AAF7700D8D78F /* aho_corasick.c */,
 				32A4577F205AAF7700D8D78F /* aho_corasick.h */,
 				32A45778205AAF7600D8D78F /* cigar.c */,
@@ -293,6 +299,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3260AA9E205BFDC500593C4B /* options.h in Headers */,
 				32A4578D205AAF7800D8D78F /* queue.h in Headers */,
 				32A45785205AAF7800D8D78F /* edit_distance_generator.h in Headers */,
 				32A45788205AAF7800D8D78F /* string_vector_vector.h in Headers */,
@@ -456,6 +463,7 @@
 				32A45786205AAF7800D8D78F /* string_vector_vector.c in Sources */,
 				32A4576F205AAF4F00D8D78F /* size_vector.c in Sources */,
 				32A45787205AAF7800D8D78F /* edit_distance_generator.c in Sources */,
+				3260AA9D205BFDC500593C4B /* options.c in Sources */,
 				32A45783205AAF7800D8D78F /* queue.c in Sources */,
 				32A45771205AAF4F00D8D78F /* string_vector.c in Sources */,
 				32A45784205AAF7800D8D78F /* cigar.c in Sources */,

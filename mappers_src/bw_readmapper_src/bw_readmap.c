@@ -25,7 +25,7 @@ static void print_usage(const char *prog_name, FILE *file)
             prog_name, prog_name);
     
     fprintf(file, "Options:\n");
-    fprintf(file, "\t-h | --help:\t Show this message.\n");
+    fprintf(file, "\t-h | --help:\t\t Show this message.\n");
     fprintf(file, "\t-p | --preprocess:\t Preprocess a reference genome.\n");
     fprintf(file, "\nSearch options:\n");
     fprintf(file, "\t-d | --distance:\t Maximum edit distance for the search.\n");
