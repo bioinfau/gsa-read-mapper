@@ -62,7 +62,7 @@ else
 	exit 1
 fi
 
-printf "$(tput bold)`ls ../mappers_src/`$(tput sgr0)"
+
 
 ## Run evaluation of all mappers...
 if [ -e $report_file ]; then
