@@ -7,7 +7,7 @@ all:
 		mapper_name=`basename $$m _src`	                 ;\
 		echo $$mapper_name		 		                       ;\
 		(cd $$m && make)  		 		                       ;\
-		if [ ! -e $$mapper_name]; then                   ;\
+		if [ ! -e $$mapper_name]; then                    \
 			cp $$m/$$mapper_name $$mapper_name             ;\
 		fi                                               ;\
 		if [ $$m/$$mapper_name -nt $$mapper_name ]; then  \
