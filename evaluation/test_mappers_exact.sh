@@ -62,6 +62,8 @@ else
 	exit 1
 fi
 
+printf "$(tput bold)`ls ../mappers_src/`$(tput sgr0)"
+
 ## Run evaluation of all mappers...
 if [ -e $report_file ]; then
 	rm $report_file
@@ -113,7 +115,7 @@ else
 	else
 		# if we don't have a run script we call the read-mapper directly
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${ref_mapper}$(tput sgr0) "
-		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
+		${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
 		if [ $? -eq 0 ]; then
 			success
 		else
@@ -166,7 +168,7 @@ for mapper in $mappers; do
 		else
 			# if we don't have a run script we call the read-mapper directly
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${mapper}$(tput sgr0) "
-			../mappers_src/${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
+			${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
 			if [ $? -eq 0 ]; then
 				success
 			else
