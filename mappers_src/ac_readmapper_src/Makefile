@@ -1,4 +1,3 @@
-#CFLAGS=-DEXTENDED_CIGAR -Wall -O3
 CFLAGS=-Wall -O3
 
 source_files = $(wildcard *.c)

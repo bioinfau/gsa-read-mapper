@@ -10,6 +10,7 @@
 #include "fastq.h"
 #include "sam.h"
 #include "edit_distance_generator.h"
+#include "options.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -17,24 +18,26 @@
 #include <getopt.h>
 
 typedef void (*exact_match_func)(const char *text, size_t n,
-                                 const char *pattern, size_t m,
-                                 match_callback_func callback,
-                                 void *callback_data);
+const char *pattern, size_t m,
+match_callback_func callback,
+void *callback_data);
 
 struct search_info {
     int edit_dist;
     struct fasta_records *records;
     FILE *sam_file;
     exact_match_func match_func;
+    struct options *options;
 };
 
-static struct search_info *empty_search_info()
+static struct search_info *empty_search_info(struct options *options)
 {
     struct search_info *info =
         (struct search_info*)malloc(sizeof(struct search_info));
     info->edit_dist = 0;
     info->records = empty_fasta_records();
     info->match_func = 0;
+    info->options = options;
     return info;
 }
 
@@ -57,7 +60,7 @@ struct read_search_info {
 static struct read_search_info *empty_read_search_info()
 {
     struct read_search_info *info =
-        (struct read_search_info*)malloc(sizeof(struct read_search_info));
+    (struct read_search_info*)malloc(sizeof(struct read_search_info));
     
     info->ref_name = 0;
     info->read_name = 0;
@@ -65,7 +68,7 @@ static struct read_search_info *empty_read_search_info()
     info->quality = 0;
     info->cigar = 0;
     info->search_info = 0;
-
+    
     return info;
 }
 
@@ -122,7 +125,8 @@ static void read_callback(const char *read_name,
     
     generate_all_neighbours(read, "ACGT",
                             search_info->edit_dist,
-                            pattern_callback, info);
+                            pattern_callback, info,
+                            search_info->options);
     delete_read_search_info(info);
 }
 
@@ -130,20 +134,27 @@ int main(int argc, char * argv[])
 {
     const char *prog_name = argv[0];
     const char *algorithm = "naive";
-    int opt; int edit_dist = 0;
+    struct options options;
+    options.edit_distance = 0;
+    options.extended_cigars = false;
+    options.verbose = false;
+    
+    int opt;
     static struct option longopts[] = {
         { "help",       no_argument,            NULL,           'h' },
         { "distance",   required_argument,      NULL,           'd' },
+        { "extended-cigar",   no_argument,      NULL,           'x' },
         { "algorithm",  required_argument,      NULL,           'a' },
         { NULL,         0,                      NULL,            0  }
     };
-    while ((opt = getopt_long(argc, argv, "hd:a:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hd:a:x", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 printf("Usage: %s [options] ref.fa reads.fq\n\n", prog_name);
                 printf("Options:\n");
                 printf("\t-h | --help:\t\t Show this message.\n");
                 printf("\t-d | --distance:\t Maximum edit distance for the search.\n");
+                printf("\t-x | --extended-cigar:\t Use extended CIGAR format in SAM output.\n");
                 printf("\t-a | --algorithm:\t Algorithm to use for the search.\n");
                 printf("\t\t\t\t Choices are:\n");
                 printf("\t\t\t\t\t\"naive\"\n");
@@ -154,12 +165,17 @@ int main(int argc, char * argv[])
                 return EXIT_SUCCESS;
                 
             case 'd':
-                edit_dist = atoi(optarg);
+                options.edit_distance = atoi(optarg);
                 break;
                 
             case 'a':
                 algorithm = optarg;
                 break;
+                
+            case 'x':
+                options.extended_cigars = true;
+                break;
+                
                 
             default:
                 fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", prog_name);
@@ -186,8 +202,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     
-    struct search_info *search_info = empty_search_info();
-    search_info->edit_dist = edit_dist;
+    struct search_info *search_info = empty_search_info(&options);
+    search_info->edit_dist = options.edit_distance;
     
     if (strcmp(algorithm, "naive") == 0) {
         search_info->match_func = naive_exact_match;

@@ -1,4 +1,3 @@
-#CFLAGS=-DEXTENDED_CIGAR -Wall -O3
 CFLAGS=-Wall -O3
 
 source_files = $(wildcard *.c)
@@ -13,7 +12,7 @@ clean:
 
 depend:
 	makedepend $(source_files)
-	
+
 # DO NOT DELETE
 
 bw_readmap.o: suffix_array.h suffix_array_records.h fasta.h string_vector.h

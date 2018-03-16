@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3260AA97205BF7F100593C4B /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 3260AA95205BF7F100593C4B /* options.c */; };
 		32B484512057CD0300AE904F /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484332057CCFF00AE904F /* queue.c */; };
 		32B484522057CD0300AE904F /* trie.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484342057CCFF00AE904F /* trie.c */; };
 		32B484532057CD0300AE904F /* edit_distance_generator.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484372057CCFF00AE904F /* edit_distance_generator.c */; };
@@ -37,6 +38,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3260AA95205BF7F100593C4B /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = SOURCE_ROOT; };
+		3260AA96205BF7F100593C4B /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = SOURCE_ROOT; };
 		328B499D2057CCCD00E52645 /* match_readmapper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = match_readmapper; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B484332057CCFF00AE904F /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = queue.c; sourceTree = SOURCE_ROOT; };
 		32B484342057CCFF00AE904F /* trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trie.c; sourceTree = SOURCE_ROOT; };
@@ -99,6 +102,8 @@
 		328B499F2057CCCD00E52645 /* match_readmapper */ = {
 			isa = PBXGroup;
 			children = (
+				3260AA95205BF7F100593C4B /* options.c */,
+				3260AA96205BF7F100593C4B /* options.h */,
 				32B4844C2057CD0200AE904F /* buffer.c */,
 				32B484492057CD0200AE904F /* buffer.h */,
 				32B484502057CD0300AE904F /* cigar.c */,
@@ -195,6 +200,7 @@
 				32B484512057CD0300AE904F /* queue.c in Sources */,
 				32B4845B2057CD0300AE904F /* fastq.c in Sources */,
 				32B484562057CD0300AE904F /* fasta.c in Sources */,
+				3260AA97205BF7F100593C4B /* options.c in Sources */,
 				32B484582057CD0300AE904F /* strings.c in Sources */,
 				32B4845C2057CD0300AE904F /* size_vector.c in Sources */,
 				32B484592057CD0300AE904F /* string_vector.c in Sources */,

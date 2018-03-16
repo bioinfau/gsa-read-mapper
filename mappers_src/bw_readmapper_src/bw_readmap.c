@@ -21,8 +21,8 @@
 static void print_usage(const char *prog_name, FILE *file)
 {
     fprintf(file, "Usage: %s -p | --preprocess ref.fa\n"
-           "              %s [search options] ref.fa reads.fq\n",
-           prog_name, prog_name);
+            "              %s [search options] ref.fa reads.fq\n",
+            prog_name, prog_name);
     
     fprintf(file, "Options:\n");
     fprintf(file, "\t-h | --help:\t Show this message.\n");
@@ -52,49 +52,53 @@ int main(int argc, char *argv[]) {
         {NULL, 0, NULL, 0}};
     while ((opt = getopt_long(argc, argv, "hpd:x", longopts, NULL)) != -1) {
         switch (opt) {
-        case 'h':
-            print_usage(argv[0], stdout);
-            return EXIT_SUCCESS;
-
-        case 'p':
-            preprocess = true;
-            break;
-
-        case 'd':
-            options.edit_distance = atoi(optarg);
-            break;
-
-        default:
-            print_usage(argv[0], stderr);
-            return EXIT_FAILURE;
+            case 'h':
+                print_usage(argv[0], stdout);
+                return EXIT_SUCCESS;
+                
+            case 'p':
+                preprocess = true;
+                break;
+                
+            case 'd':
+                options.edit_distance = atoi(optarg);
+                break;
+                
+            case 'x':
+                options.extended_cigars = true;
+                break;
+                
+            default:
+                print_usage(argv[0], stderr);
+                return EXIT_FAILURE;
         }
     }
     argc -= optind;
     argv += optind;
-
+    
     if (preprocess) {
         if (argc != 1) {
             print_usage(argv[0], stderr);
             return EXIT_FAILURE;
         }
-
+        
         FILE *fasta_file = fopen(argv[0], "r");
         if (!fasta_file) {
             fprintf(stderr, "Could not open %s.\n", argv[0]);
             return EXIT_FAILURE;
         }
-
+        
         struct fasta_records *records = empty_fasta_records();
         if (0 != read_fasta_records(records, fasta_file)) {
             fprintf(stderr, "Could not read FASTA file.\n");
             return EXIT_FAILURE;
         }
         fclose(fasta_file);
-
+        
         struct suffix_array_records *sa_records =
-            build_suffix_array_records(records);
+        build_suffix_array_records(records);
         write_suffix_array_records(sa_records, records, argv[0]);
-
+        
         delete_suffix_array_records(sa_records);
         delete_fasta_records(records);
         
@@ -103,33 +107,33 @@ int main(int argc, char *argv[]) {
             print_usage(argv[0], stderr);
             return EXIT_FAILURE;
         }
-
+        
         FILE *fasta_file = fopen(argv[0], "r");
         if (!fasta_file) {
             fprintf(stderr, "Could not open %s.\n", argv[0]);
             return EXIT_FAILURE;
         }
-
+        
         FILE *fastq_file = fopen(argv[1], "r");
         if (!fastq_file) {
             fprintf(stderr, "Could not open %s.\n", argv[1]);
             return EXIT_FAILURE;
         }
-
+        
         struct fasta_records *fasta_records = empty_fasta_records();
         if (0 != read_fasta_records(fasta_records, fasta_file)) {
             fprintf(stderr, "Could not read FASTA file.\n");
             return EXIT_FAILURE;
         }
         fclose(fasta_file);
-
+        
         struct suffix_array_records *sa_records = empty_suffix_array_records();
         if (0 != read_suffix_array_records(sa_records, fasta_records, argv[0])) {
             fprintf(stderr, "Could not read suffix arrays.\n");
             delete_fasta_records(fasta_records);
             return EXIT_FAILURE;
         }
-
+        
         FILE *samfile = stdout;
         char read_name_buffer[FASTQ_BUFFER_SIZE];
         char read_buffer[FASTQ_BUFFER_SIZE];
@@ -150,13 +154,13 @@ int main(int argc, char *argv[]) {
                        sa->length - 1, options.edit_distance, cigar, cigar_buffer + n - 1, sa,
                        samfile, &options);
             }
-
+            
         }
-
+        
         delete_fasta_records(fasta_records);
         delete_suffix_array_records(sa_records);
         fclose(fastq_file);
     }
-
+    
     return EXIT_SUCCESS;
 }
