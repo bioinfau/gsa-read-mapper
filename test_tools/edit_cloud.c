@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     while ((opt = getopt_long(argc, argv, "hvd:x", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
-                printf("Usage: %s [options] alphabet string\n\n", argv[0]);
+                printf("Usage: %s [options] alphabet string\n\n", progname);
                 printf("Options:\n");
                 printf("\t-h | --help:\t\t Show this message.\n");
                 printf("\t-d | --distance:\t Maximum edit distance for the search.\n");
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
                 break;
                 
             default:
-                fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", argv[0]);
+                fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", progname);
                 return EXIT_FAILURE;
         }
     }
@@ -54,11 +54,16 @@ int main(int argc, char *argv[]) {
     argv += optind;
 
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s [options] alphabet string\n", argv[0]);
+        fprintf(stderr, "Usage: %s [options] alphabet string\n", progname);
         return EXIT_FAILURE;
     }
 
-    generate_all_neighbours(argv[3], argv[2], atoi(argv[1]), callback, 0, &options);
+    const char *alphabet = argv[0];
+    const char *core_string = argv[1];
+    
+    generate_all_neighbours(core_string, alphabet,
+                            options.edit_distance,
+                            callback, 0, &options);
 
     return EXIT_SUCCESS;
 }

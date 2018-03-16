@@ -10,12 +10,14 @@ in this directory.
 
 ## edit_cloud
 
-This tool builds the edit-cloud around a string. It takes three arguments, the edit-distance to explore around the core string, the alphabet to use for the exploration, provided as a string of characters, and finally the core string itself.
+This tool builds the edit-cloud around a string. Using the `-d` option, you can specify the edit-distance to explore around the core string. Required positional options are: 
+1. the alphabet to use for the exploration, provided as a string of characters, and 
+2. the core string itself.
 
 To see all strings one edit away from `AA` we can run:
 
 ```sh
-$ ./edit_cloud 1 ACGT AA
+$ ./edit_cloud -d 1 ACGT AA
 ```
 
 This produces:
@@ -57,7 +59,7 @@ When the same pattern appears more than once in the input—which it will becaus
 An example of running the program can look like this:
 
 ```sh
-$ ./edit_cloud 1 ACGT AA > AA.patterns.txt
+$ ./edit_cloud -d 1 ACGT AA > AA.patterns.txt
 $ ./display_trie AA.patterns.txt
 Building trie.
 Computing failure links.
