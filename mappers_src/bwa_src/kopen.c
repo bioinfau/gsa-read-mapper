@@ -201,7 +201,7 @@ static int kftp_get_response(ftpaux_t *aux) {
     if (socket_wait(aux->ctrl_fd, 1) <= 0)
         return 0;
     while (read(aux->ctrl_fd, &c,
-                1)) { // FIXME: this is *VERY BAD* for unbuffered I/O
+                1)) { // FIXME: this is *VERY BAD* for unbuffered I/O id:30 gh:49 ic:gh
         if (n >= aux->max_response) {
             aux->max_response =
                 aux->max_response ? aux->max_response << 1 : 256;
@@ -396,7 +396,7 @@ void *kopen(const char *fn, int *_fd) {
                 return 0;
             }
             if (pid == 0) {  /* the child process */
-                char **argv; /* FIXME: I do not know if this will lead to a
+                char **argv; /* FIXME: I do not know if this will lead to a id:31 gh:50 ic:gh
                                 memory leak */
                 close(pfd[0]);
                 dup2(pfd[1], STDOUT_FILENO);
