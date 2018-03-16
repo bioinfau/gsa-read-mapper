@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3260AA9A205BFB7400593C4B /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 3260AA98205BFB7300593C4B /* options.c */; };
 		32B484932057CF7400AE904F /* edit_distance_generator.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484752057CF6F00AE904F /* edit_distance_generator.c */; };
 		32B484942057CF7400AE904F /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484762057CF7000AE904F /* queue.c */; };
 		32B484952057CF7400AE904F /* sam.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484772057CF7000AE904F /* sam.c */; };
@@ -38,6 +39,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3260AA98205BFB7300593C4B /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = SOURCE_ROOT; };
+		3260AA99205BFB7400593C4B /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = SOURCE_ROOT; };
 		32B4846A2057CF3900AE904F /* ac_readmapper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ac_readmapper; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B484742057CF6F00AE904F /* fastq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastq.h; sourceTree = SOURCE_ROOT; };
 		32B484752057CF6F00AE904F /* edit_distance_generator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = edit_distance_generator.c; sourceTree = SOURCE_ROOT; };
@@ -102,6 +105,8 @@
 		32B4846C2057CF3900AE904F /* ac_readmapper */ = {
 			isa = PBXGroup;
 			children = (
+				3260AA98205BFB7300593C4B /* options.c */,
+				3260AA99205BFB7400593C4B /* options.h */,
 				32B484B6205807E500AE904F /* string_vector_vector.c */,
 				32B484B5205807E500AE904F /* string_vector_vector.h */,
 				32B484B02057E64100AE904F /* trie.c */,
@@ -202,6 +207,7 @@
 				32B4849B2057CF7400AE904F /* fasta.c in Sources */,
 				32B484972057CF7400AE904F /* fastq.c in Sources */,
 				32B484A12057CF7400AE904F /* strings.c in Sources */,
+				3260AA9A205BFB7400593C4B /* options.c in Sources */,
 				32B4849F2057CF7400AE904F /* buffer.c in Sources */,
 				32B484962057CF7400AE904F /* pair_stack.c in Sources */,
 				32B484942057CF7400AE904F /* queue.c in Sources */,

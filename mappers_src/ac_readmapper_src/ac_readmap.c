@@ -10,6 +10,7 @@
 #include "string_vector_vector.h"
 #include "aho_corasick.h"
 #include "edit_distance_generator.h"
+#include "options.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -19,15 +20,15 @@
 
 struct search_info {
     struct fasta_records *records;
-    int edit_dist;
+    struct options *options;
     FILE *sam_file;
 };
 
-static struct search_info *empty_search_info()
+static struct search_info *empty_search_info(struct options *options)
 {
     struct search_info *info =
         (struct search_info*)malloc(sizeof(struct search_info));
-    info->edit_dist = 0;
+    info->options = options;
     info->records = empty_fasta_records();
     return info;
 }
@@ -127,7 +128,8 @@ static void read_callback(const char *read_name,
     info->read = read;
     info->quality = quality;
     
-    generate_all_neighbours(read, "ACGT", search_info->edit_dist, build_trie_callback, info);
+    generate_all_neighbours(read, "ACGT", search_info->options->edit_distance,
+                            build_trie_callback, info, search_info->options);
     compute_failure_links(info->patterns_trie);
     
     info->read_name = read_name;
@@ -145,26 +147,37 @@ int main(int argc, char * argv[])
 {
     const char *prog_name = argv[0];
     
-    int opt; int edit_dist = 0;
+    struct options options;
+    options.edit_distance = 0;
+    options.extended_cigars = false;
+    options.verbose = false;
+    
+    int opt;
     static struct option longopts[] = {
         { "help",       no_argument,            NULL,           'h' },
         { "distance",   required_argument,      NULL,           'd' },
+        { "extended-cigar",   no_argument,      NULL,           'x' },
         { NULL,         0,                      NULL,            0  }
     };
-    while ((opt = getopt_long(argc, argv, "hd:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hd:x", longopts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 printf("Usage: %s [options] ref.fa reads.fq\n\n", prog_name);
                 printf("Options:\n");
                 printf("\t-h | --help:\t\t Show this message.\n");
+                printf("\t-x | --extended-cigar:\t Use extended CIGAR format in SAM output.\n");
                 printf("\t-d | --distance:\t Maximum edit distance for the search.\n");
                 printf("\n\n");
                 return EXIT_SUCCESS;
                 
             case 'd':
-                edit_dist = atoi(optarg);
+                options.edit_distance = atoi(optarg);
                 break;
 
+            case 'x':
+                options.extended_cigars = true;
+                break;
+                
             default:
                 fprintf(stderr, "Usage: %s [options] ref.fa reads.fq\n", prog_name);
                 return EXIT_FAILURE;
@@ -190,8 +203,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     
-    struct search_info *search_info = empty_search_info();
-    search_info->edit_dist = edit_dist;
+    struct search_info *search_info = empty_search_info(&options);
     read_fasta_records(search_info->records, fasta_file);
     fclose(fasta_file);
     

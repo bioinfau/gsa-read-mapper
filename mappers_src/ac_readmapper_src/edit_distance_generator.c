@@ -16,7 +16,8 @@ static void recursive_generator(const char *pattern, char *buffer, char *cigar,
                                 int max_edit_distance,
                                 struct recursive_constant_data *data,
                                 edits_callback_func callback,
-                                void *callback_data)
+                                void *callback_data,
+                                struct options *options)
 {
     if (*pattern == '\0') {
         // no more pattern to match ... 
@@ -34,7 +35,7 @@ static void recursive_generator(const char *pattern, char *buffer, char *cigar,
                 *cigar = 'D';
                 recursive_generator(pattern, buffer + 1, cigar + 1,
                                     max_edit_distance - 1, data,
-                                    callback, callback_data);
+                                    callback, callback_data, options);
             }
         }
         
@@ -44,11 +45,10 @@ static void recursive_generator(const char *pattern, char *buffer, char *cigar,
         size_t rest = strlen(pattern);
         for (size_t i = 0; i < rest; ++i) {
             buffer[i] = pattern[i];
-#ifdef EXTENDED_CIGAR
-            cigar[i] = '=';
-#else
-            cigar[i] = 'M';
-#endif
+            if (options->extended_cigars)
+                cigar[i] = '=';
+            else
+                cigar[i] = 'M';
         }
         buffer[rest] = cigar[rest] = '\0';
         simplify_cigar(data->cigar_front, data->simplify_cigar_buffer);
@@ -60,37 +60,35 @@ static void recursive_generator(const char *pattern, char *buffer, char *cigar,
         *cigar = 'I';
         recursive_generator(pattern + 1, buffer, cigar + 1,
                             max_edit_distance - 1, data,
-                            callback, callback_data);
+                            callback, callback_data, options);
         // insertion
         for (const char *a = data->alphabet; *a; a++) {
             *buffer = *a;
             *cigar = 'D';
             recursive_generator(pattern, buffer + 1, cigar + 1,
                                 max_edit_distance - 1, data,
-                                callback, callback_data);
+                                callback, callback_data, options);
         }
         // match / substitution
         for (const char *a = data->alphabet; *a; a++) {
             if (*a == *pattern) {
                 *buffer = *a;
-#ifdef EXTENDED_CIGAR
-                *cigar = '=';
-#else
-                *cigar = 'M';
-#endif
+                if (options->extended_cigars)
+                    *cigar = '=';
+                else
+                    *cigar = 'M';
                 recursive_generator(pattern + 1, buffer + 1, cigar + 1,
                                     max_edit_distance, data,
-                                    callback, callback_data);
+                                    callback, callback_data, options);
             } else {
                 *buffer = *a;
-#ifdef EXTENDED_CIGAR
-                *cigar = 'X';
-#else
-                *cigar = 'M';
-#endif
+                if (options->extended_cigars)
+                    *cigar = 'X';
+                else
+                    *cigar = 'M';
                 recursive_generator(pattern + 1, buffer + 1, cigar + 1,
                                     max_edit_distance - 1, data,
-                                    callback, callback_data);
+                                    callback, callback_data, options);
             }
         }
     }
@@ -100,12 +98,13 @@ void generate_all_neighbours(const char *pattern,
                              const char *alphabet,
                              int max_edit_distance,
                              edits_callback_func callback,
-                             void *callback_data)
+                             void *callback_data,
+                             struct options *options)
 {
     size_t n = strlen(pattern) + max_edit_distance + 1;
     char buffer[n];
     char cigar[n], cigar_buffer[n];
     struct recursive_constant_data data = { buffer, cigar, alphabet, cigar_buffer };
     recursive_generator(pattern, buffer, cigar, max_edit_distance, &data,
-                        callback, callback_data);
+                        callback, callback_data, options);
 }
