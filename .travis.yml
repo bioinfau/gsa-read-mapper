@@ -8,4 +8,5 @@ os:
   - linux
 
 script:
-  - make mappers && make test
+  - make mappers
+  - make test
