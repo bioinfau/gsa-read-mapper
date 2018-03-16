@@ -9,7 +9,7 @@ while (<>) {
 		print;
 		my @t = split("\t");
 		while ($l =~ /([^,;]+),([-+]\d+),([^,]+),(\d+);/g) {
-			my $mchr = ($t[6] eq $1)? '=' : $t[6]; # FIXME: TLEN/ISIZE is not calculated!
+			my $mchr = ($t[6] eq $1)? '=' : $t[6]; # FIXME: TLEN/ISIZE is not calculated! id:17 gh:35 ic:gh
 			my $seq = $t[9];
 			my $phred = $t[10];
 			# if alternative alignment has other orientation than primary, 

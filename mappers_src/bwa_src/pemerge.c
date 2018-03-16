@@ -105,6 +105,7 @@ int bwa_pemerge(const pem_opt_t *opt, bseq1_t x[2]) {
         goto pem_ret;
     } // we do not allow gaps
 
+<<<<<<< HEAD
     { // test tandem match; O(n^2)
         int max_m, max_m2, min_l, max_l, max_l2;
         max_m = max_m2 = 0;
@@ -136,6 +137,26 @@ int bwa_pemerge(const pem_opt_t *opt, bseq1_t x[2]) {
             goto pem_ret;
         }
     }
+=======
+	{ // test tandem match; O(n^2)
+		int max_m, max_m2, min_l, max_l, max_l2;
+		max_m = max_m2 = 0; max_l = max_l2 = 0;
+		min_l = x[0].l_seq < x[1].l_seq? x[0].l_seq : x[1].l_seq;
+		for (l = 1; l < min_l; ++l) {
+			int m = 0, o = x[0].l_seq - l;
+			uint8_t *s0o = &s[0][o], *s1 = s[1];
+			for (i = 0; i < l; ++i) // TODO: in principle, this can be done with SSE2. It is the bottleneck! id:11 gh:29 ic:gh
+				m += opt->mat[(s1[i]<<2) + s1[i] + s0o[i]]; // equivalent to s[1][i]*5 + s[0][o+i]
+			if (m > max_m) max_m2 = max_m, max_m = m, max_l2 = max_l, max_l = l;
+			else if (m > max_m2) max_m2 = m, max_l2 = l;
+		}
+		if (max_m < opt->T || max_l != x[0].l_seq - (r.tb - r.qb)) { ret = -6; goto pem_ret; }
+		if (max_l2 < max_l && max_m2 >= opt->T && (double)(max_m2 + (max_l - max_l2) * opt->a) / max_m >= MAX_SCORE_RATIO) {
+			ret = -7; goto pem_ret;
+		}
+		if (max_l2 > max_l && (double)max_m2 / max_m >= MAX_SCORE_RATIO) { ret = -7; goto pem_ret; }
+	}
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 
     l = x[0].l_seq - (r.tb - r.qb); // length to merge
     l_seq = x[0].l_seq + x[1].l_seq - l;

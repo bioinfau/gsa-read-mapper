@@ -39,12 +39,22 @@ static inline char *dupkstring(const kstring_t *str, int dupempty) {
     return s;
 }
 
+<<<<<<< HEAD
 static inline void kseq2bseq1(const kseq_t *ks, bseq1_t *s) {
     s->name = dupkstring(&ks->name, 1);
     s->comment = dupkstring(&ks->comment, 0);
     s->seq = dupkstring(&ks->seq, 1);
     s->qual = dupkstring(&ks->qual, 0);
     s->l_seq = ks->seq.l;
+=======
+static inline void kseq2bseq1(const kseq_t *ks, bseq1_t *s)
+{ // TODO: it would be better to allocate one chunk of memory, but probably it does not matter in practice id:12 gh:30 ic:gh
+	s->name = dupkstring(&ks->name, 1);
+	s->comment = dupkstring(&ks->comment, 0);
+	s->seq = dupkstring(&ks->seq, 1);
+	s->qual = dupkstring(&ks->qual, 0);
+	s->l_seq = ks->seq.l;
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 bseq1_t *bseq_read(int chunk_size, int *n_, void *ks1_, void *ks2_) {

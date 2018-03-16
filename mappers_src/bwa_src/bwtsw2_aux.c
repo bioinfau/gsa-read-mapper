@@ -100,6 +100,7 @@ bwtsw2_t *bsw2_dup_no_cigar(const bwtsw2_t *b) {
     return p;
 }
 
+<<<<<<< HEAD
 #define __gen_ap(par, opt)                                                     \
     do {                                                                       \
         int i;                                                                 \
@@ -165,6 +166,59 @@ void bsw2_extend_left(const bsw2opt_t *opt, bwtsw2_t *b, uint8_t *_query,
     }
     free(query);
     free(target);
+=======
+#define __gen_ap(par, opt) do {									\
+		int i;													\
+		for (i = 0; i < 25; ++i) (par).matrix[i] = -(opt)->b;	\
+		for (i = 0; i < 4; ++i) (par).matrix[i*5+i] = (opt)->a; \
+		(par).gap_open = (opt)->q; (par).gap_ext = (opt)->r;	\
+		(par).gap_end = (opt)->r;								\
+		(par).row = 5; (par).band_width = opt->bw;				\
+	} while (0)
+
+void bsw2_extend_left(const bsw2opt_t *opt, bwtsw2_t *b, uint8_t *_query, int lq, uint8_t *pac, bwtint_t l_pac, uint8_t *_mem)
+{
+	int i;
+	bwtint_t k;
+	uint8_t *target = 0, *query;
+	int8_t mat[25];
+
+	bwa_fill_scmat(opt->a, opt->b, mat);
+	query = calloc(lq, 1);
+	// sort according to the descending order of query end
+	ks_introsort(hit, b->n, b->hits);
+	target = calloc(((lq + 1) / 2 * opt->a + opt->r) / opt->r + lq, 1);
+	// reverse _query
+	for (i = 0; i < lq; ++i) query[lq - i - 1] = _query[i];
+	// core loop
+	for (i = 0; i < b->n; ++i) {
+		bsw2hit_t *p = b->hits + i;
+		int lt = ((p->beg + 1) / 2 * opt->a + opt->r) / opt->r + lq;
+		int score, j, qle, tle;
+		p->n_seeds = 1;
+		if (p->l || p->k == 0) continue;
+		for (j = score = 0; j < i; ++j) {
+			bsw2hit_t *q = b->hits + j;
+			if (q->beg <= p->beg && q->k <= p->k && q->k + q->len >= p->k + p->len) {
+				if (q->n_seeds < (1<<13) - 2) ++q->n_seeds;
+				++score;
+			}
+		}
+		if (score) continue;
+		if (lt > p->k) lt = p->k;
+		for (k = p->k - 1, j = 0; k > 0 && j < lt; --k) // FIXME: k=0 not considered! id:20 gh:38 ic:gh
+			target[j++] = pac[k>>2] >> (~k&3)*2 & 0x3;
+		lt = j;
+		score = ksw_extend(p->beg, &query[lq - p->beg], lt, target, 5, mat, opt->q, opt->r, opt->bw, 0, -1, p->G, &qle, &tle, 0, 0, 0);
+		if (score > p->G) { // extensible
+			p->G = score;
+			p->k -= tle;
+			p->len += tle;
+			p->beg -= qle;
+		}
+	}
+	free(query); free(target);
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 void bsw2_extend_rght(const bsw2opt_t *opt, bwtsw2_t *b, uint8_t *query, int lq,
@@ -367,6 +421,7 @@ typedef struct {
     bsw2seq1_t *seq;
 } bsw2seq_t;
 
+<<<<<<< HEAD
 static int fix_cigar(const bntseq_t *bns, bsw2hit_t *p, int n_cigar,
                      uint32_t *cigar) {
     int32_t coor, refl, lq;
@@ -446,6 +501,79 @@ static int fix_cigar(const bntseq_t *bns, bsw2hit_t *p, int n_cigar,
         free(cn);
     }
     return n_cigar;
+=======
+static int fix_cigar(const bntseq_t *bns, bsw2hit_t *p, int n_cigar, uint32_t *cigar)
+{
+	// FIXME: this routine does not work if the query bridge three reference sequences id:26 gh:45 ic:gh
+	int32_t coor, refl, lq;
+	int x, y, i, seqid;
+	bns_cnt_ambi(bns, p->k, p->len, &seqid);
+	coor = p->k - bns->anns[seqid].offset;
+	refl = bns->anns[seqid].len;
+	x = coor; y = 0;
+	// test if the alignment goes beyond the boundary
+	for (i = 0; i < n_cigar; ++i) {
+		int op = cigar[i]&0xf, ln = cigar[i]>>4;
+		if (op == 1 || op == 4 || op == 5) y += ln;
+		else if (op == 2) x += ln;
+		else x += ln, y += ln;
+	}
+	lq = y; // length of the query sequence
+	if (x > refl) { // then fix it
+		int j, nc, mq[2], nlen[2];
+		uint32_t *cn;
+		bwtint_t kk = 0;
+		nc = mq[0] = mq[1] = nlen[0] = nlen[1] = 0;
+		cn = calloc(n_cigar + 3, 4);
+		x = coor; y = 0;
+		for (i = j = 0; i < n_cigar; ++i) {
+			int op = cigar[i]&0xf, ln = cigar[i]>>4;
+			if (op == 4 || op == 5 || op == 1) { // ins or clipping
+				y += ln;
+				cn[j++] = cigar[i];
+			} else if (op == 2) { // del
+				if (x + ln >= refl && nc == 0) {
+					cn[j++] = (uint32_t)(lq - y)<<4 | 4;
+					nc = j;
+					cn[j++] = (uint32_t)y<<4 | 4;
+					kk = p->k + (x + ln - refl);
+					nlen[0] = x - coor;
+					nlen[1] = p->len - nlen[0] - ln;
+				} else cn[j++] = cigar[i];
+				x += ln;
+			} else if (op == 0) { // match
+				if (x + ln >= refl && nc == 0) {
+					// FIXME: not consider a special case where a split right between M and I id:3 gh:21 ic:gh
+					cn[j++] = (uint32_t)(refl - x)<<4 | 0; // write M
+					cn[j++] = (uint32_t)(lq - y - (refl - x))<<4 | 4; // write S
+					nc = j;
+					mq[0] += refl - x;
+					cn[j++] = (uint32_t)(y + (refl - x))<<4 | 4;
+					if (x + ln - refl) cn[j++] = (uint32_t)(x + ln - refl)<<4 | 0;
+					mq[1] += x + ln - refl;
+					kk = bns->anns[seqid].offset + refl;
+					nlen[0] = refl - coor;
+					nlen[1] = p->len - nlen[0];
+				} else {
+					cn[j++] = cigar[i];
+					mq[nc?1:0] += ln;
+				}
+				x += ln; y += ln;
+			}
+		}
+		if (mq[0] > mq[1]) { // then take the first alignment
+			n_cigar = nc;
+			memcpy(cigar, cn, 4 * nc);
+			p->len = nlen[0];
+		} else {
+			p->k = kk; p->len = nlen[1];
+			n_cigar = j - nc;
+			memcpy(cigar, cn + nc, 4 * (j - nc));
+		}
+		free(cn);
+	}
+	return n_cigar;
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 static void write_aux(const bsw2opt_t *opt, const bntseq_t *bns, int qlen,
@@ -666,6 +794,7 @@ static void update_opt(bsw2opt_t *dst, const bsw2opt_t *src, int qlen) {
 }
 
 /* Core routine to align reads in _seq. It is separated from
+<<<<<<< HEAD
  * process_seqs() to realize multi-threading */
 static void bsw2_aln_core(bsw2seq_t *_seq, const bsw2opt_t *_opt,
                           const bntseq_t *bns, uint8_t *pac,
@@ -764,6 +893,92 @@ static void bsw2_aln_core(bsw2seq_t *_seq, const bsw2opt_t *_opt,
         bsw2_destroy(buf[x]);
     free(buf);
     bsw2_global_destroy(pool);
+=======
+ * process_seqs() to realize multi-threading */ 
+static void bsw2_aln_core(bsw2seq_t *_seq, const bsw2opt_t *_opt, const bntseq_t *bns, uint8_t *pac, const bwt_t *target, int is_pe)
+{
+	int x;
+	bsw2opt_t opt;
+	bsw2global_t *pool = bsw2_global_init();
+	bwtsw2_t **buf;
+	buf = calloc(_seq->n, sizeof(void*));
+	for (x = 0; x < _seq->n; ++x) {
+		bsw2seq1_t *p = _seq->seq + x;
+		uint8_t *seq[2], *rseq[2];
+		int i, l, k;
+		bwtsw2_t *b[2];
+		l = p->l;
+		update_opt(&opt, _opt, p->l);
+		if (pool->max_l < l) { // then enlarge working space for aln_extend_core()
+			int tmp = ((l + 1) / 2 * opt.a + opt.r) / opt.r + l;
+			pool->max_l = l;
+			pool->aln_mem = realloc(pool->aln_mem, (tmp + 2) * 24);
+		}
+		// set seq[2] and rseq[2]
+		seq[0] = calloc(l * 4, 1);
+		seq[1] = seq[0] + l;
+		rseq[0] = seq[1] + l; rseq[1] = rseq[0] + l;
+		// convert sequences to 2-bit representation
+		for (i = k = 0; i < l; ++i) {
+			int c = nst_nt4_table[(int)p->seq[i]];
+			if (c >= 4) { c = (int)(drand48() * 4); ++k; } // FIXME: ambiguous bases are not properly handled id:9 gh:27 ic:gh
+			seq[0][i] = c;
+			seq[1][l-1-i] = 3 - c;
+			rseq[0][l-1-i] = 3 - c;
+			rseq[1][i] = c;
+		}
+		if (l - k < opt.t) { // too few unambiguous bases
+			buf[x] = calloc(1, sizeof(bwtsw2_t));
+			free(seq[0]); continue;
+		}
+		// alignment
+		b[0] = bsw2_aln1_core(&opt, bns, pac, target, l, seq, pool);
+		for (k = 0; k < b[0]->n; ++k)
+			if (b[0]->hits[k].n_seeds < opt.t_seeds) break;
+		if (k < b[0]->n) {
+			b[1] = bsw2_aln1_core(&opt, bns, pac, target, l, rseq, pool);
+			for (i = 0; i < b[1]->n; ++i) {
+				bsw2hit_t *p = &b[1]->hits[i];
+				int x = p->beg;
+				p->flag ^= 0x10, p->is_rev ^= 1; // flip the strand
+				p->beg = l - p->end;
+				p->end = l - x;
+			}
+			flag_fr(b);
+			merge_hits(b, l, 0);
+			bsw2_resolve_duphits(0, 0, b[0], 0);
+			bsw2_resolve_query_overlaps(b[0], opt.mask_level);
+		} else b[1] = 0;
+		// generate CIGAR and print SAM
+		buf[x] = bsw2_dup_no_cigar(b[0]);
+		// free
+		free(seq[0]);
+		bsw2_destroy(b[0]);
+	}
+	if (is_pe) bsw2_pair(&opt, bns->l_pac, pac, _seq->n, _seq->seq, buf);
+	for (x = 0; x < _seq->n; ++x) {
+		bsw2seq1_t *p = _seq->seq + x;
+		uint8_t *seq[2];
+		int i;
+		seq[0] = malloc(p->l * 2); seq[1] = seq[0] + p->l;
+		for (i = 0; i < p->l; ++i) {
+			int c = nst_nt4_table[(int)p->seq[i]];
+			if (c >= 4) c = (int)(drand48() * 4);
+			seq[0][i] = c;
+			seq[1][p->l-1-i] = 3 - c;
+		}
+		update_opt(&opt, _opt, p->l);
+		write_aux(&opt, bns, p->l, seq, pac, buf[x], _seq->seq[x].name);
+		free(seq[0]);
+	}
+	for (x = 0; x < _seq->n; ++x) {
+		if (is_pe) update_mate_aux(buf[x], buf[x^1]);
+		print_hits(bns, &opt, &_seq->seq[x], buf[x], is_pe, buf[x^1]);
+	}
+	for (x = 0; x < _seq->n; ++x) bsw2_destroy(buf[x]);
+	free(buf);
+	bsw2_global_destroy(pool);
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 #ifdef HAVE_PTHREAD

@@ -122,6 +122,7 @@ int bwa_approx_mapQ(const bwa_seq_t *p, int mm) {
     return (23 < g_log_n[n]) ? 0 : 23 - g_log_n[n];
 }
 
+<<<<<<< HEAD
 bwtint_t bwa_sa2pos(const bntseq_t *bns, const bwt_t *bwt, bwtint_t sapos,
                     int ref_len, int *strand) {
     bwtint_t pos_f;
@@ -140,6 +141,19 @@ bwtint_t bwa_sa2pos(const bntseq_t *bns, const bwt_t *bwt, bwtint_t sapos,
                     ? 0
                     : pos_f - ref_len + 1; // position of the first base
     return pos_f;
+=======
+bwtint_t bwa_sa2pos(const bntseq_t *bns, const bwt_t *bwt, bwtint_t sapos, int ref_len, int *strand)
+{
+	bwtint_t pos_f;
+	int is_rev;
+	*strand = 0; // initialise strand to 0 otherwise we could return without setting it
+	pos_f = bwt_sa(bwt, sapos); // position on the forward-reverse coordinate
+	if (pos_f < bns->l_pac && bns->l_pac < pos_f + ref_len) return (bwtint_t)-1;
+	pos_f = bns_depos(bns, pos_f, &is_rev); // position on the forward strand; this may be the first base or the last base
+	*strand = !is_rev;
+	if (is_rev) pos_f = pos_f + 1 < ref_len? 0 : pos_f - ref_len + 1; // position of the first base
+	return pos_f; // FIXME: it is possible that pos_f < bns->anns[ref_id].offset id:2 gh:20 ic:gh
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 /**

@@ -122,6 +122,7 @@ static int http_open(const char *fn) {
         path = strdup(fn);
     }
 
+<<<<<<< HEAD
     /* connect; adapted from khttp_connect() in knetfile.c */
     l = 0;
     fd = socket_connect(host, port);
@@ -145,6 +146,27 @@ retry:
     if (bytes < 0 &&
         (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR))
         goto retry;
+=======
+	/* connect; adapted from khttp_connect() in knetfile.c */
+	l = 0;
+	fd = socket_connect(host, port);
+	buf = calloc(bufsz, 1); // FIXME: I am lazy... But in principle, 64KB should be large enough. id:16 gh:34 ic:gh
+	l += snprintf(buf + l, bufsz, "GET %s HTTP/1.0\r\nHost: %s\r\n\r\n",
+				 path, http_host);
+	if (write_bytes(fd, buf, l) != 0) {
+		close(fd);
+		fd = -1;
+		goto out;
+	}
+	l = 0;
+ retry:
+	while (l < bufsz && (bytes = read(fd, buf + l, 1)) > 0) { // read HTTP header; FIXME: bad efficiency
+		if (buf[l] == '\n' && l >= 3)
+			if (strncmp(buf + l - 3, "\r\n\r\n", 4) == 0) break;
+		++l;
+	}
+	if (bytes < 0 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) goto retry;
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 
     buf[l] = 0;
     if (bytes < 0 || l < 14) { // prematured header
@@ -171,6 +193,7 @@ typedef struct {
     char *response;
 } ftpaux_t;
 
+<<<<<<< HEAD
 static int kftp_get_response(ftpaux_t *aux) {
     unsigned char c;
     int n = 0;
@@ -198,6 +221,30 @@ static int kftp_get_response(ftpaux_t *aux) {
         return -1;
     aux->response[n - 2] = 0;
     return strtol(aux->response, &p, 0);
+=======
+static int kftp_get_response(ftpaux_t *aux)
+{
+	unsigned char c;
+	int n = 0;
+	char *p;
+	if (socket_wait(aux->ctrl_fd, 1) <= 0) return 0;
+	while (read(aux->ctrl_fd, &c, 1)) { // FIXME: this is *VERY BAD* for unbuffered I/O id:22 gh:41 ic:gh
+		if (n >= aux->max_response) {
+			aux->max_response = aux->max_response? aux->max_response<<1 : 256;
+			aux->response = realloc(aux->response, aux->max_response);
+		}
+		aux->response[n++] = c;
+		if (c == '\n') {
+			if (n >= 4 && isdigit(aux->response[0]) && isdigit(aux->response[1]) && isdigit(aux->response[2])
+				&& aux->response[3] != '-') break;
+			n = 0;
+			continue;
+		}
+	}
+	if (n < 2) return -1;
+	aux->response[n-2] = 0;
+	return strtol(aux->response, &p, 0);
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }
 
 static int kftp_send_cmd(ftpaux_t *aux, const char *cmd, int is_get) {
@@ -309,6 +356,7 @@ typedef struct {
     pid_t pid;
 } koaux_t;
 
+<<<<<<< HEAD
 void *kopen(const char *fn, int *_fd) {
     koaux_t *aux = 0;
     *_fd = -1;
@@ -369,6 +417,61 @@ void *kopen(const char *fn, int *_fd) {
                 aux->pid = pid;
             }
         } else {
+=======
+void *kopen(const char *fn, int *_fd)
+{
+	koaux_t *aux = 0;
+	*_fd = -1;
+	if (strstr(fn, "http://") == fn) {
+		aux = calloc(1, sizeof(koaux_t));
+		aux->type = KO_HTTP;
+		aux->fd = http_open(fn);
+	} else if (strstr(fn, "ftp://") == fn) {
+		aux = calloc(1, sizeof(koaux_t));
+		aux->type = KO_FTP;
+		aux->fd = ftp_open(fn);
+	} else if (strcmp(fn, "-") == 0) {
+		aux = calloc(1, sizeof(koaux_t));
+		aux->type = KO_STDIN;
+		aux->fd = STDIN_FILENO;
+	} else {
+		const char *p, *q;
+		for (p = fn; *p; ++p)
+			if (!isspace(*p)) break;
+		if (*p == '<') { // pipe open
+			int need_shell, pfd[2];
+			pid_t pid;
+			// a simple check to see if we need to invoke a shell; not always working
+			for (q = p + 1; *q; ++q)
+				if (ispunct(*q) && *q != '.' && *q != '_' && *q != '-' && *q != ':')
+					break;
+			need_shell = (*q != 0);
+			if (pipe(pfd) != 0) return 0;
+			pid = vfork();
+			if (pid == -1) { /* vfork() error */
+				close(pfd[0]); close(pfd[1]);
+				return 0;
+			}
+			if (pid == 0) { /* the child process */
+				char **argv; /* FIXME: I do not know if this will lead to a memory leak id:28 gh:40 ic:gh*/
+				close(pfd[0]);
+				dup2(pfd[1], STDOUT_FILENO);
+				close(pfd[1]);
+				if (!need_shell) {
+					argv = cmd2argv(p + 1);
+					execvp(argv[0], argv);
+					free(argv[0]); free(argv);
+				} else execl("/bin/sh", "sh", "-c", p + 1, NULL);
+				exit(1);
+			} else { /* parent process */
+				close(pfd[1]);
+				aux = calloc(1, sizeof(koaux_t));
+				aux->type = KO_PIPE;
+				aux->fd = pfd[0];
+				aux->pid = pid;
+			}
+		} else {
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 #ifdef _WIN32
             *_fd = open(fn, O_RDONLY | O_BINARY);
 #else

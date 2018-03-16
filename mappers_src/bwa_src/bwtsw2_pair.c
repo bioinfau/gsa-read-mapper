@@ -210,6 +210,7 @@ void bsw2_pair1(const bsw2opt_t *opt, int64_t l_pac, const uint8_t *pac,
     free(seq);
 }
 
+<<<<<<< HEAD
 void bsw2_pair(const bsw2opt_t *opt, int64_t l_pac, const uint8_t *pac, int n,
                bsw2seq1_t *seq, bwtsw2_t **hits) {
     extern int bsw2_resolve_duphits(const bntseq_t *bns, const bwt_t *bwt,
@@ -355,4 +356,116 @@ void bsw2_pair(const bsw2opt_t *opt, int64_t l_pac, const uint8_t *pac, int n,
              n_fixed, n_rescued, n_moved);
     fputs(msg.s, stderr);
     free(msg.s);
+=======
+void bsw2_pair(const bsw2opt_t *opt, int64_t l_pac, const uint8_t *pac, int n, bsw2seq1_t *seq, bwtsw2_t **hits)
+{
+	extern int bsw2_resolve_duphits(const bntseq_t *bns, const bwt_t *bwt, bwtsw2_t *b, int IS);
+	bsw2pestat_t pes;
+	int i, j, k, n_rescued = 0, n_moved = 0, n_fixed = 0;
+	int8_t g_mat[25];
+	kstring_t msg;
+	memset(&msg, 0, sizeof(kstring_t));
+	pes = bsw2_stat(n, hits, &msg, opt->max_ins);
+	for (i = k = 0; i < 5; ++i) {
+		for (j = 0; j < 4; ++j)
+			g_mat[k++] = i == j? opt->a : -opt->b;
+		g_mat[k++] = 0;
+	}
+	for (i = 0; i < n; i += 2) {
+		bsw2hit_t a[2];
+		memset(&a, 0, sizeof(bsw2hit_t) * 2);
+		a[0].flag = 1<<6; a[1].flag = 1<<7;
+		for (j = 0; j < 2; ++j) { // set the read1/2 flag
+			if (hits[i+j] == 0) continue;
+			for (k = 0; k < hits[i+j]->n; ++k) {
+				bsw2hit_t *p = &hits[i+j]->hits[k];
+				p->flag |= 1<<(6+j);
+			}
+		}
+		if (pes.failed) continue;
+		if (hits[i] == 0 || hits[i+1] == 0) continue; // one end has excessive N
+		if (hits[i]->n != 1 && hits[i+1]->n != 1) continue; // no end has exactly one hit
+		if (hits[i]->n > 1 || hits[i+1]->n > 1) continue; // one read has more than one hit
+		if (!opt->skip_sw) {
+			if (hits[i+0]->n == 1) bsw2_pair1(opt, l_pac, pac, &pes, &hits[i+0]->hits[0], seq[i+1].l, seq[i+1].seq, &a[1], g_mat);
+			if (hits[i+1]->n == 1) bsw2_pair1(opt, l_pac, pac, &pes, &hits[i+1]->hits[0], seq[i+0].l, seq[i+0].seq, &a[0], g_mat);
+		} // else a[0].G == a[1].G == a[0].G2 == a[1].G2 == 0
+		// the following enumerate all possibilities. It is tedious but necessary...
+		if (hits[i]->n + hits[i+1]->n == 1) { // one end mapped; the other not;
+			bwtsw2_t *p[2];
+			int which;
+			if (hits[i]->n == 1) p[0] = hits[i], p[1] = hits[i+1], which = 1;
+			else p[0] = hits[i+1], p[1] = hits[i], which = 0;
+			if (a[which].G == 0) continue;
+			a[which].flag |= BSW2_FLAG_RESCUED;
+			if (p[1]->max == 0) {
+				p[1]->max = 1;
+				p[1]->hits = malloc(sizeof(bsw2hit_t));
+			}
+			p[1]->hits[0] = a[which];
+			p[1]->n = 1;
+			p[0]->hits[0].flag |= 2;
+			p[1]->hits[0].flag |= 2;
+			++n_rescued;
+		} else { // then both ends mapped
+			int is_fixed = 0;
+			//fprintf(stderr, "%d; %lld,%lld; %d,%d\n", a[0].is_rev, hits[i]->hits[0].k, a[0].k, hits[i]->hits[0].end, a[0].end);
+			for (j = 0; j < 2; ++j) { // fix wrong mappings and wrong suboptimal alignment score
+				bsw2hit_t *p = &hits[i+j]->hits[0];
+				if (p->G < a[j].G) { // the orginal mapping is suboptimal
+					a[j].G2 = a[j].G2 > p->G? a[j].G2 : p->G; // FIXME: reset BSW2_FLAG_TANDEM? id:15 gh:33 ic:gh
+					*p = a[j];
+					++n_fixed;
+					is_fixed = 1;
+				} else if (p->k != a[j].k && p->G2 < a[j].G) {
+					p->G2 = a[j].G;
+				} else if (p->k == a[j].k && p->G2 < a[j].G2) {
+					p->G2 = a[j].G2;
+				}
+			}
+			if (hits[i]->hits[0].k == a[0].k && hits[i+1]->hits[0].k == a[1].k) { // properly paired and no ends need to be moved
+				for (j = 0; j < 2; ++j)
+					hits[i+j]->hits[0].flag |= 2 | (a[j].flag & BSW2_FLAG_TANDEM);
+			} else if (hits[i]->hits[0].k == a[0].k || hits[i+1]->hits[0].k == a[1].k) { // a tandem match
+				for (j = 0; j < 2; ++j) {
+					hits[i+j]->hits[0].flag |= 2;
+					if (hits[i+j]->hits[0].k != a[j].k)
+						hits[i+j]->hits[0].flag |= BSW2_FLAG_TANDEM;
+				}
+			} else if (!is_fixed && (a[0].G || a[1].G)) { // it is possible to move one end
+				if (a[0].G && a[1].G) { // now we have two "proper pairs"
+					int G[2];
+					double diff;
+					G[0] = hits[i]->hits[0].G + a[1].G;
+					G[1] = hits[i+1]->hits[0].G + a[0].G;
+					diff = fabs((double)(G[0] - G[1])) / (opt->a + opt->b) / ((hits[i]->hits[0].len + a[1].len + hits[i+1]->hits[0].len + a[0].len) / 2.);
+					if (diff > 0.05) a[G[0] > G[1]? 0 : 1].G = 0;
+				}
+				if (a[0].G == 0 || a[1].G == 0) { // one proper pair only
+					bsw2hit_t *p[2]; // p[0] points the unchanged hit; p[1] to the hit to be moved
+					int which, isize;
+					double dev, diff;
+					if (a[0].G) p[0] = &hits[i+1]->hits[0], p[1] = &hits[i]->hits[0], which = 0;
+					else p[0] = &hits[i]->hits[0], p[1] = &hits[i+1]->hits[0], which = 1;
+					isize = p[0]->is_rev? p[0]->k + p[0]->len - a[which].k : a[which].k + a[which].len - p[0]->k;
+					dev = fabs(isize - pes.avg) / pes.std;
+					diff = (double)(p[1]->G - a[which].G) / (opt->a + opt->b) / (p[1]->end - p[1]->beg) * 100.0;
+					if (diff < dev * 2.) { // then move (heuristic)
+						a[which].G2 = a[which].G;
+						p[1][0] = a[which];
+						p[1]->flag |= BSW2_FLAG_MOVED | 2;
+						p[0]->flag |= 2;
+						++n_moved;
+					}
+				}
+			} else if (is_fixed) {
+				hits[i+0]->hits[0].flag |= 2;
+				hits[i+1]->hits[0].flag |= 2;
+			}
+		}
+	}
+	ksprintf(&msg, "[%s] #fixed=%d, #rescued=%d, #moved=%d\n", __func__, n_fixed, n_rescued, n_moved);
+	fputs(msg.s, stderr);
+	free(msg.s);
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 }

@@ -303,7 +303,7 @@ static const double __ac_HASH_UPPER = 0.77;
 			} else if (kh_resize_##name(h, h->n_buckets + 1) < 0) { /* expand the hash table */ \
 				*ret = -1; return h->n_buckets;							\
 			}															\
-		} /* TODO: to implement automatically shrinking; resize() already support shrinking */ \
+		} /* TODO: to implement automatically shrinking; resize() already support shrinking id:10 gh:28 ic:gh*/ \
 		{																\
 			khint_t inc, k, i, site, last, mask = h->n_buckets - 1;		\
 			x = site = h->n_buckets; k = __hash_func(key); i = k & mask; \

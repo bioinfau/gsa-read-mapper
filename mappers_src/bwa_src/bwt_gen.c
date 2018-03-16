@@ -356,6 +356,7 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable) {
 
     bwt->bwtSizeInWord = 0;
 
+<<<<<<< HEAD
     // Generate decode tables
     if (decodeTable == NULL) {
         bwt->decodeTable = (unsigned *)calloc(DNA_OCC_CNT_TABLE_SIZE_IN_WORD,
@@ -364,6 +365,16 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable) {
     } else {
         bwt->decodeTable = decodeTable;
     }
+=======
+	// Generate decode tables
+	if (decodeTable == NULL) {
+		bwt->decodeTable = (unsigned*)calloc(DNA_OCC_CNT_TABLE_SIZE_IN_WORD, sizeof(unsigned int));
+		GenerateDNAOccCountTable(bwt->decodeTable);
+	} else {
+		// FIXME Prevent BWTFree() from freeing decodeTable in this case id:14 gh:32 ic:gh
+		bwt->decodeTable = decodeTable;
+	}
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 
     bwt->occMajorSizeInWord = BWTOccValueMajorSizeInWord(textLength);
     bwt->occValueMajor =

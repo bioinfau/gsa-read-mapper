@@ -155,6 +155,7 @@ int main_mem(int argc, char *argv[]) {
     for (i = 0; i < 4; ++i)
         pes[i].failed = 1;
 
+<<<<<<< HEAD
     aux.opt = opt = mem_opt_init();
     memset(&opt0, 0, sizeof(mem_opt_t));
     while ((c = getopt(argc, argv,
@@ -300,6 +301,108 @@ int main_mem(int argc, char *argv[]) {
         } else
             return 1;
     }
+=======
+	aux.opt = opt = mem_opt_init();
+	memset(&opt0, 0, sizeof(mem_opt_t));
+	while ((c = getopt(argc, argv, "51qpaMCSPVYjk:c:v:s:r:t:R:A:B:O:E:U:w:L:d:T:Q:D:m:I:N:o:f:W:x:G:h:y:K:X:H:")) >= 0) {
+		if (c == 'k') opt->min_seed_len = atoi(optarg), opt0.min_seed_len = 1;
+		else if (c == '1') no_mt_io = 1;
+		else if (c == 'x') mode = optarg;
+		else if (c == 'w') opt->w = atoi(optarg), opt0.w = 1;
+		else if (c == 'A') opt->a = atoi(optarg), opt0.a = 1;
+		else if (c == 'B') opt->b = atoi(optarg), opt0.b = 1;
+		else if (c == 'T') opt->T = atoi(optarg), opt0.T = 1;
+		else if (c == 'U') opt->pen_unpaired = atoi(optarg), opt0.pen_unpaired = 1;
+		else if (c == 't') opt->n_threads = atoi(optarg), opt->n_threads = opt->n_threads > 1? opt->n_threads : 1;
+		else if (c == 'P') opt->flag |= MEM_F_NOPAIRING;
+		else if (c == 'a') opt->flag |= MEM_F_ALL;
+		else if (c == 'p') opt->flag |= MEM_F_PE | MEM_F_SMARTPE;
+		else if (c == 'M') opt->flag |= MEM_F_NO_MULTI;
+		else if (c == 'S') opt->flag |= MEM_F_NO_RESCUE;
+		else if (c == 'Y') opt->flag |= MEM_F_SOFTCLIP;
+		else if (c == 'V') opt->flag |= MEM_F_REF_HDR;
+		else if (c == '5') opt->flag |= MEM_F_PRIMARY5 | MEM_F_KEEP_SUPP_MAPQ; // always apply MEM_F_KEEP_SUPP_MAPQ with -5
+		else if (c == 'q') opt->flag |= MEM_F_KEEP_SUPP_MAPQ;
+		else if (c == 'c') opt->max_occ = atoi(optarg), opt0.max_occ = 1;
+		else if (c == 'd') opt->zdrop = atoi(optarg), opt0.zdrop = 1;
+		else if (c == 'v') bwa_verbose = atoi(optarg);
+		else if (c == 'j') ignore_alt = 1;
+		else if (c == 'r') opt->split_factor = atof(optarg), opt0.split_factor = 1.;
+		else if (c == 'D') opt->drop_ratio = atof(optarg), opt0.drop_ratio = 1.;
+		else if (c == 'm') opt->max_matesw = atoi(optarg), opt0.max_matesw = 1;
+		else if (c == 's') opt->split_width = atoi(optarg), opt0.split_width = 1;
+		else if (c == 'G') opt->max_chain_gap = atoi(optarg), opt0.max_chain_gap = 1;
+		else if (c == 'N') opt->max_chain_extend = atoi(optarg), opt0.max_chain_extend = 1;
+		else if (c == 'o' || c == 'f') xreopen(optarg, "wb", stdout);
+		else if (c == 'W') opt->min_chain_weight = atoi(optarg), opt0.min_chain_weight = 1;
+		else if (c == 'y') opt->max_mem_intv = atol(optarg), opt0.max_mem_intv = 1;
+		else if (c == 'C') aux.copy_comment = 1;
+		else if (c == 'K') fixed_chunk_size = atoi(optarg);
+		else if (c == 'X') opt->mask_level = atof(optarg);
+		else if (c == 'h') {
+			opt0.max_XA_hits = opt0.max_XA_hits_alt = 1;
+			opt->max_XA_hits = opt->max_XA_hits_alt = strtol(optarg, &p, 10);
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				opt->max_XA_hits_alt = strtol(p+1, &p, 10);
+		}
+		else if (c == 'Q') {
+			opt0.mapQ_coef_len = 1;
+			opt->mapQ_coef_len = atoi(optarg);
+			opt->mapQ_coef_fac = opt->mapQ_coef_len > 0? log(opt->mapQ_coef_len) : 0;
+		} else if (c == 'O') {
+			opt0.o_del = opt0.o_ins = 1;
+			opt->o_del = opt->o_ins = strtol(optarg, &p, 10);
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				opt->o_ins = strtol(p+1, &p, 10);
+		} else if (c == 'E') {
+			opt0.e_del = opt0.e_ins = 1;
+			opt->e_del = opt->e_ins = strtol(optarg, &p, 10);
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				opt->e_ins = strtol(p+1, &p, 10);
+		} else if (c == 'L') {
+			opt0.pen_clip5 = opt0.pen_clip3 = 1;
+			opt->pen_clip5 = opt->pen_clip3 = strtol(optarg, &p, 10);
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				opt->pen_clip3 = strtol(p+1, &p, 10);
+		} else if (c == 'R') {
+			if ((rg_line = bwa_set_rg(optarg)) == 0) return 1; // FIXME: memory leak id:21 gh:39 ic:gh
+		} else if (c == 'H') {
+			if (optarg[0] != '@') {
+				FILE *fp;
+				if ((fp = fopen(optarg, "r")) != 0) {
+					char *buf;
+					buf = calloc(1, 0x10000);
+					while (fgets(buf, 0xffff, fp)) {
+						i = strlen(buf);
+						assert(buf[i-1] == '\n'); // a long line
+						buf[i-1] = 0;
+						hdr_line = bwa_insert_header(buf, hdr_line);
+					}
+					free(buf);
+					fclose(fp);
+				}
+			} else hdr_line = bwa_insert_header(optarg, hdr_line);
+		} else if (c == 'I') { // specify the insert size distribution
+			aux.pes0 = pes;
+			pes[1].failed = 0;
+			pes[1].avg = strtod(optarg, &p);
+			pes[1].std = pes[1].avg * .1;
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				pes[1].std = strtod(p+1, &p);
+			pes[1].high = (int)(pes[1].avg + 4. * pes[1].std + .499);
+			pes[1].low  = (int)(pes[1].avg - 4. * pes[1].std + .499);
+			if (pes[1].low < 1) pes[1].low = 1;
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				pes[1].high = (int)(strtod(p+1, &p) + .499);
+			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
+				pes[1].low  = (int)(strtod(p+1, &p) + .499);
+			if (bwa_verbose >= 3)
+				fprintf(stderr, "[M::%s] mean insert size: %.3f, stddev: %.3f, max: %d, min: %d\n",
+						__func__, pes[1].avg, pes[1].std, pes[1].high, pes[1].low);
+		}
+		else return 1;
+	}
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 
     if (rg_line) {
         hdr_line = bwa_insert_header(rg_line, hdr_line);
@@ -437,6 +540,7 @@ int main_mem(int argc, char *argv[]) {
         return 1;
     }
 
+<<<<<<< HEAD
     if (mode) {
         if (strcmp(mode, "intractg") == 0) {
             if (!opt0.o_del)
@@ -500,6 +604,48 @@ int main_mem(int argc, char *argv[]) {
     if (ignore_alt)
         for (i = 0; i < aux.idx->bns->n_seqs; ++i)
             aux.idx->bns->anns[i].is_alt = 0;
+=======
+	if (mode) {
+		if (strcmp(mode, "intractg") == 0) {
+			if (!opt0.o_del) opt->o_del = 16;
+			if (!opt0.o_ins) opt->o_ins = 16;
+			if (!opt0.b) opt->b = 9;
+			if (!opt0.pen_clip5) opt->pen_clip5 = 5;
+			if (!opt0.pen_clip3) opt->pen_clip3 = 5;
+		} else if (strcmp(mode, "pacbio") == 0 || strcmp(mode, "pbref") == 0 || strcmp(mode, "ont2d") == 0) {
+			if (!opt0.o_del) opt->o_del = 1;
+			if (!opt0.e_del) opt->e_del = 1;
+			if (!opt0.o_ins) opt->o_ins = 1;
+			if (!opt0.e_ins) opt->e_ins = 1;
+			if (!opt0.b) opt->b = 1;
+			if (opt0.split_factor == 0.) opt->split_factor = 10.;
+			if (strcmp(mode, "ont2d") == 0) {
+				if (!opt0.min_chain_weight) opt->min_chain_weight = 20;
+				if (!opt0.min_seed_len) opt->min_seed_len = 14;
+				if (!opt0.pen_clip5) opt->pen_clip5 = 0;
+				if (!opt0.pen_clip3) opt->pen_clip3 = 0;
+			} else {
+				if (!opt0.min_chain_weight) opt->min_chain_weight = 40;
+				if (!opt0.min_seed_len) opt->min_seed_len = 17;
+				if (!opt0.pen_clip5) opt->pen_clip5 = 0;
+				if (!opt0.pen_clip3) opt->pen_clip3 = 0;
+			}
+		} else {
+			fprintf(stderr, "[E::%s] unknown read type '%s'\n", __func__, mode);
+			return 1; // FIXME memory leak id:27 gh:46 ic:gh
+		}
+	} else update_a(opt, &opt0);
+	bwa_fill_scmat(opt->a, opt->b, opt->mat);
+
+	aux.idx = bwa_idx_load_from_shm(argv[optind]);
+	if (aux.idx == 0) {
+		if ((aux.idx = bwa_idx_load(argv[optind], BWA_IDX_ALL)) == 0) return 1; // FIXME: memory leak id:4 gh:22 ic:gh
+	} else if (bwa_verbose >= 3)
+		fprintf(stderr, "[M::%s] load the bwa index from shared memory\n", __func__);
+	if (ignore_alt)
+		for (i = 0; i < aux.idx->bns->n_seqs; ++i)
+			aux.idx->bns->anns[i].is_alt = 0;
+>>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
 
     ko = kopen(argv[optind + 1], &fd);
     if (ko == 0) {
