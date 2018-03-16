@@ -1,16 +1,9 @@
 {
   "exclude": [
-<<<<<<< HEAD
-    "^(node_modules|bower_components|\\.imdone|target|build|dist|logs|flow-typed)[\\/\\\\]?|\\.(git|svn|hg|npmignore)|\\~$|\\.(jpg|png|gif|swp|ttf|otf)$"
-  ],
-  "watcher": true,
-  "keepEmptyPriority": false,
-=======
     "^(node_modules|bower_components|\\.imdone|target|build|dist|logs|flow-typed|imdone-export.json)[\\/\\\\]?|\\.(git|svn|hg|npmignore)|\\~$|\\.(jpg|png|gif|swp|ttf|otf)$"
   ],
   "watcher": true,
   "keepEmptyPriority": true,
->>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
   "code": {
     "include_lists": [
       "TODO",
@@ -24,12 +17,8 @@
       "XXX",
       "IDEA",
       "NOTE",
-<<<<<<< HEAD
-      "REVIEW"
-=======
       "REVIEW",
       "MARK"
->>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
     ]
   },
   "lists": [
@@ -53,13 +42,10 @@
     "pedantic": false,
     "smartLists": true,
     "langPrefix": "language-"
-<<<<<<< HEAD
-=======
   },
   "sync": {
     "id": "5aac33b2cae9560b1512501d",
     "name": "mailund/gsa-read-mapper",
     "useImdoneioForPriority": true
->>>>>>> d8543aff45a0e8a3fdc7c7977c8f9021966aad1f
   }
 }
