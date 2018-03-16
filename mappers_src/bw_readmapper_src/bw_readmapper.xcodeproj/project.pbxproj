@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3277D274205BECC500F7FD8E /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 3277D273205BECC500F7FD8E /* options.c */; };
 		3295996820567A020031C302 /* sam.c in Sources */ = {isa = PBXBuildFile; fileRef = 32959956205679FF0031C302 /* sam.c */; };
 		3295996920567A020031C302 /* bw_readmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 32959958205679FF0031C302 /* bw_readmap.c */; };
 		3295996A20567A020031C302 /* string_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 3295995A20567A000031C302 /* string_vector.c */; };
@@ -34,6 +35,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3277D272205BECC500F7FD8E /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = SOURCE_ROOT; };
+		3277D273205BECC500F7FD8E /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = SOURCE_ROOT; };
 		32959955205679FF0031C302 /* sam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sam.h; sourceTree = SOURCE_ROOT; };
 		32959956205679FF0031C302 /* sam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sam.c; sourceTree = SOURCE_ROOT; };
 		32959957205679FF0031C302 /* strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strings.h; sourceTree = SOURCE_ROOT; };
@@ -90,6 +93,8 @@
 		32D8FE542056799B000A55B6 /* bw_readmapper */ = {
 			isa = PBXGroup;
 			children = (
+				3277D273205BECC500F7FD8E /* options.c */,
+				3277D272205BECC500F7FD8E /* options.h */,
 				32959958205679FF0031C302 /* bw_readmap.c */,
 				329599722056B6500031C302 /* search.c */,
 				329599752057B2200031C302 /* cigar.c */,
@@ -176,6 +181,7 @@
 			files = (
 				3295996820567A020031C302 /* sam.c in Sources */,
 				3295996E20567A020031C302 /* size_vector.c in Sources */,
+				3277D274205BECC500F7FD8E /* options.c in Sources */,
 				3295996920567A020031C302 /* bw_readmap.c in Sources */,
 				3295996C20567A020031C302 /* strings.c in Sources */,
 				3295997020567A020031C302 /* suffix_array.c in Sources */,

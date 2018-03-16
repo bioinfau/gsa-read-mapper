@@ -26,3 +26,19 @@ void scan_fastq(FILE *file, fastq_read_callback_func callback, void * callback_d
         free(qual);
     }
 }
+
+bool fastq_parse_next_record(FILE *file, char *read_name_buffer,
+                             char *read_buffer, char *quality_buffer)
+{
+    char buffer[MAX_LINE_SIZE];
+    
+    if (fgets(buffer, MAX_LINE_SIZE, file) == 0) return false; // read name line
+    strcpy(read_name_buffer, strtok(buffer+1, "\n"));
+    if (fgets(buffer, MAX_LINE_SIZE, file) == 0) return false; // read line
+    strcpy(read_buffer, strtok(buffer, "\n"));
+    if (fgets(buffer, MAX_LINE_SIZE, file) == 0) return false; // '+' line
+    if (fgets(buffer, MAX_LINE_SIZE, file) == 0) return false; // quality line
+    strcpy(quality_buffer, strtok(buffer, "\n"));
+    
+    return true;
+}

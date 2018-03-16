@@ -8,7 +8,7 @@
 void search(const char *read_name, const char *read, size_t read_idx,
             const char *quality, const char *ref_name, size_t L, size_t R,
             int d, char *cigar, char *cigar_buffer, struct suffix_array *sa,
-            FILE *samfile)
+            FILE *samfile, struct options *options)
 {
     assert(d >= 0); // if it get's negative we've called too deeply
 
@@ -50,7 +50,7 @@ void search(const char *read_name, const char *read, size_t read_idx,
 
                 *cigar_buffer = 'D';
                 search(read_name, read, read_idx, quality, ref_name, new_L,
-                       new_R, d - 1, cigar, cigar_buffer - 1, sa, samfile);
+                       new_R, d - 1, cigar, cigar_buffer - 1, sa, samfile, options);
             }
         }
 
@@ -72,14 +72,13 @@ void search(const char *read_name, const char *read, size_t read_idx,
             sa->c_table[(int)a] + 1 + sa->o_table[o_table_index(sa, a, L - 1)];
     new_R = sa->c_table[(int)a] + sa->o_table[o_table_index(sa, a, R)];
 
-#ifdef EXTENDED_CIGAR
-    *cigar_buffer = '=';
-#else
-    *cigar_buffer = 'M';
-#endif
+    if (options->extended_cigars)
+        *cigar_buffer = '=';
+    else
+        *cigar_buffer = 'M';
 
     search(read_name, read, read_idx - 1, quality, ref_name, new_L, new_R, d,
-           cigar, cigar_buffer - 1, sa, samfile);
+           cigar, cigar_buffer - 1, sa, samfile, options);
 
     if (d > 0) {
         // ---SUBSTITUTION------------------------------------------
@@ -100,13 +99,13 @@ void search(const char *read_name, const char *read, size_t read_idx,
             if (new_L > new_R)
                 continue;
 
-#ifdef EXTENDED_CIGAR
-            *cigar_buffer = 'X';
-#else
-            *cigar_buffer = 'M';
-#endif
+            if (options->extended_cigars)
+                *cigar_buffer = 'X';
+            else
+                *cigar_buffer = 'M';
+
             search(read_name, read, read_idx - 1, quality, ref_name, new_L,
-                   new_R, d - 1, cigar, cigar_buffer - 1, sa, samfile);
+                   new_R, d - 1, cigar, cigar_buffer - 1, sa, samfile, options);
         } // end for
 
         // ---DELETION----------------------------------------------
@@ -127,12 +126,13 @@ void search(const char *read_name, const char *read, size_t read_idx,
 
             *cigar_buffer = 'D';
             search(read_name, read, read_idx, quality, ref_name, new_L, new_R,
-                   d - 1, cigar, cigar_buffer - 1, sa, samfile);
+                   d - 1, cigar, cigar_buffer - 1, sa, samfile, options);
         } // end for
 
         // ---INSERTION---------------------------------------------
         *cigar_buffer = 'I';
         search(read_name, read, read_idx - 1, quality, ref_name, L, R, d - 1,
-               cigar, cigar_buffer - 1, sa, samfile);
+               cigar, cigar_buffer - 1, sa, samfile, options);
+        
     } // end if (d > 0)
 }
