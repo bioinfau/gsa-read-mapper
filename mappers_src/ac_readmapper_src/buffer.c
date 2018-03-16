@@ -17,7 +17,7 @@ struct buffer *allocate_buffer(size_t buffer_size)
 
 void add_to_buffer(struct buffer *buffer, size_t value)
 {
-    assert(buffer->used < buffer->size); // FIXME: reallocate larger buffer instead
+    assert(buffer->used < buffer->size); // FIXME: reallocate larger buffer instead id:0 gh:18 ic:gh
     buffer->buffer[(buffer->used)++] = value;
 }
 

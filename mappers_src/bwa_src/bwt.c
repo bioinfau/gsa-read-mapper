@@ -285,7 +285,7 @@ static void bwt_reverse_intvs(bwtintv_v *p)
 		}
 	}
 }
-// NOTE: $max_intv is not currently used in BWA-MEM
+// NOTE: $max_intv is not currently used in BWA-MEM id:8 gh:26 ic:gh
 int bwt_smem1a(const bwt_t *bwt, int len, const uint8_t *q, int x, int min_intv, uint64_t max_intv, bwtintv_v *mem, bwtintv_v *tmpvec[2])
 {
 	int i, j, c, ret;

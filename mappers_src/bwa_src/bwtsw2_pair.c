@@ -217,7 +217,7 @@ void bsw2_pair(const bsw2opt_t *opt, int64_t l_pac, const uint8_t *pac, int n, b
 			for (j = 0; j < 2; ++j) { // fix wrong mappings and wrong suboptimal alignment score
 				bsw2hit_t *p = &hits[i+j]->hits[0];
 				if (p->G < a[j].G) { // the orginal mapping is suboptimal
-					a[j].G2 = a[j].G2 > p->G? a[j].G2 : p->G; // FIXME: reset BSW2_FLAG_TANDEM?
+					a[j].G2 = a[j].G2 > p->G? a[j].G2 : p->G; // FIXME: reset BSW2_FLAG_TANDEM? id:15 gh:33 ic:gh
 					*p = a[j];
 					++n_fixed;
 					is_fixed = 1;

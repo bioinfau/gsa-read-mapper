@@ -93,7 +93,7 @@ int bwa_pemerge(const pem_opt_t *opt, bseq1_t x[2])
 		for (l = 1; l < min_l; ++l) {
 			int m = 0, o = x[0].l_seq - l;
 			uint8_t *s0o = &s[0][o], *s1 = s[1];
-			for (i = 0; i < l; ++i) // TODO: in principle, this can be done with SSE2. It is the bottleneck!
+			for (i = 0; i < l; ++i) // TODO: in principle, this can be done with SSE2. It is the bottleneck! id:11 gh:29 ic:gh
 				m += opt->mat[(s1[i]<<2) + s1[i] + s0o[i]]; // equivalent to s[1][i]*5 + s[0][o+i]
 			if (m > max_m) max_m2 = max_m, max_m = m, max_l2 = max_l, max_l = l;
 			else if (m > max_m2) max_m2 = m, max_l2 = l;

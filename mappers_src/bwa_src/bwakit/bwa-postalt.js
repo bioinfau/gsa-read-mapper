@@ -368,7 +368,7 @@ function bwa_postalt(args)
 
 		// prepare for hits grouping
 		for (var i = 0; i < hits.length; ++i) { // set keys for sorting
-			if (hits[i].lifted != null) // TODO: only the first element in lifted[] is used
+			if (hits[i].lifted != null) // TODO: only the first element in lifted[] is used id:18 gh:36 ic:gh
 				hits[i].pctg = hits[i].lifted[0][0], hits[i].pstart = hits[i].lifted[0][2], hits[i].pend = hits[i].lifted[0][3];
 			else hits[i].pctg = hits[i].ctg, hits[i].pstart = hits[i].start, hits[i].pend = hits[i].end;
 			hits[i].i = i; // keep the original index
