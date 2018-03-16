@@ -39,7 +39,6 @@ function failure() {
 	err_msg=$1
 	echo "$(tput setaf 1)$(tput bold)↪$(tput sgr0) " $err_msg
 	echo
-	exit 1
 }
 function failure_tick() {
 	err_msg=$1
@@ -53,12 +52,14 @@ if [ -e $reference ]; then
 	success
 else
 	failure_tick "Could not find the reference genome file. "
+	exit 1
 fi
 printf "Testing that the reads file $(tput setaf 4)$(tput bold)${reads}$(tput sgr0) exists "
 if [ -e $reads ]; then
 	success
 else
 	failure_tick "Could not find the reads file. "
+	exit 1
 fi
 
 ## Run evaluation of all mappers...
@@ -86,37 +87,44 @@ else
    			success
 		else
    			failure_tick "Preprocessing failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
-	else 
+	else
 		if [ -e ${ref_mapper}.preprocess ]; then
 			failure "The file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.preprocess$(tput sgr0) exists but is not executable!"
+			exit 1
 		fi
 	fi
 	### Constructing reference SAM --------------------------------------------------------------------
 	if [ -x ${ref_mapper}.run ]; then
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) "
-		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam 
+		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
 		if [ $? -eq 0 ]; then
    			success
 		else
    			failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
 	elif [ -e ${mapper}.run ]; then
 			failure "The file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) exists but is not executable!"
+			exit 1
 	else
 		# if we don't have a run script we call the read-mapper directly
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${ref_mapper}$(tput sgr0) "
-		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam 
+		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
 		if [ $? -eq 0 ]; then
 			success
 		else
    			failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
 	fi
 fi
 printf "   • DONE "
 success
-
 
 for mapper in $mappers; do
 	echo "Building SAM file using $(tput setaf 4)$(tput bold)${mapper}$(tput sgr0) : "
@@ -132,10 +140,13 @@ for mapper in $mappers; do
    				success
 			else
    				failure_tick "Preprocessing failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
-		else 
+		else
 			if [ -e ${mapper}.preprocess ]; then
 				failure "The file $(tput setaf 4)$(tput bold)evaluation/${mapper}.preprocess$(tput sgr0) exists but is not executable!"
+				exit 1
 			fi
 		fi
 		### Constructing reference SAM --------------------------------------------------------------------
@@ -146,9 +157,12 @@ for mapper in $mappers; do
    				success
 			else
    				failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
 		elif [ -e ${mapper}.run ]; then
 				failure "The file $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) exists but is not executable!"
+				exit 1
 		else
 			# if we don't have a run script we call the read-mapper directly
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${mapper}$(tput sgr0) "
@@ -157,6 +171,8 @@ for mapper in $mappers; do
 				success
 			else
    				failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
 		fi
 	fi
@@ -166,6 +182,7 @@ for mapper in $mappers; do
 		success
 	else
 		failure "$(tput bold)${mapper}$(tput sgr0) differs from $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0)"
+		exit 1
 	fi
 	printf "   • DONE "
 	success

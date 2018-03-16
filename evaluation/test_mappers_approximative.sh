@@ -74,8 +74,8 @@ touch $log_file
 ## Reference
 echo
 echo "Building reference SAM file using $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0) : "
-if [ -e ${ref_mapper}-approx.sam ] && [ ${ref_mapper}-approx.sam -nt ../mappers_src/${ref_mapper} ]; then
-	printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}-approx.sam$(tput sgr0) already exists "
+if [ -e ${ref_mapper}.sam ] && [ ${ref_mapper}.sam -nt ../mappers_src/${ref_mapper} ]; then
+	printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.sam$(tput sgr0) already exists "
 	success
 else
 	### Preprocessing --------------------------------------------------------------------------------
@@ -86,42 +86,49 @@ else
    			success
 		else
    			failure_tick "Preprocessing failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
-	else 
+	else
 		if [ -e ${ref_mapper}.preprocess ]; then
 			failure "The file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.preprocess$(tput sgr0) exists but is not executable!"
+			exit 1
 		fi
 	fi
 	### Constructing reference SAM --------------------------------------------------------------------
 	if [ -x ${ref_mapper}.run ]; then
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) "
-		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}-approx.sam 
+		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
 		if [ $? -eq 0 ]; then
    			success
 		else
    			failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
 	elif [ -e ${mapper}.run ]; then
 			failure "The file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) exists but is not executable!"
+			exit 1
 	else
 		# if we don't have a run script we call the read-mapper directly
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${ref_mapper}$(tput sgr0) "
-		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}-approx.sam 
+		../mappers_src/${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
 		if [ $? -eq 0 ]; then
 			success
 		else
    			failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+				cat ${log_file}
+				exit 1
 		fi
 	fi
 fi
 printf "   • DONE "
 success
 
-
 for mapper in $mappers; do
 	echo "Building SAM file using $(tput setaf 4)$(tput bold)${mapper}$(tput sgr0) : "
-	if [ -e ${mapper}-approx.sam ] && [ ${mapper}-approx.sam -nt ../mappers_src/${mapper} ]; then
-		printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${mapper}-approx.sam$(tput sgr0) already exists "
+	if [ -e ${mapper}.sam ] && [ ${mapper}.sam -nt ../mappers_src/${mapper} ]; then
+		printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${mapper}.sam$(tput sgr0) already exists "
 		success
 	else
 		### Preprocessing --------------------------------------------------------------------------------
@@ -132,40 +139,49 @@ for mapper in $mappers; do
    				success
 			else
    				failure_tick "Preprocessing failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
-		else 
+		else
 			if [ -e ${mapper}.preprocess ]; then
 				failure "The file $(tput setaf 4)$(tput bold)evaluation/${mapper}.preprocess$(tput sgr0) exists but is not executable!"
+				exit 1
 			fi
 		fi
 		### Constructing reference SAM --------------------------------------------------------------------
 		if [ -x ${mapper}.run ]; then
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) "
-			./${mapper}.run -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}-approx.sam
+			./${mapper}.run -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
 			if [ $? -eq 0 ]; then
    				success
 			else
    				failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
 		elif [ -e ${mapper}.run ]; then
 				failure "The file $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) exists but is not executable!"
+				exit 1
 		else
 			# if we don't have a run script we call the read-mapper directly
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${mapper}$(tput sgr0) "
-			../mappers_src/${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}-approx.sam
+			../mappers_src/${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
 			if [ $? -eq 0 ]; then
 				success
 			else
    				failure_tick "Read-mapping failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
+					cat ${log_file}
+					exit 1
 			fi
 		fi
 	fi
 	## Compare to reference results
 	printf "   • Comparing $(tput setaf 4)$(tput bold)${mapper}$(tput sgr0) to $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0) "
-	if ( cmp ${ref_mapper}-approx.sam ${mapper}-approx.sam ); then
+	if ( cmp ${ref_mapper}.sam ${mapper}.sam ); then
 		success
 	else
 		failure "$(tput bold)${mapper}$(tput sgr0) differs from $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0)"
+		exit 1
 	fi
 	printf "   • DONE "
 	success
