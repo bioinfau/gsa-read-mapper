@@ -107,7 +107,7 @@ static int http_open(const char *fn)
 	/* connect; adapted from khttp_connect() in knetfile.c */
 	l = 0;
 	fd = socket_connect(host, port);
-	buf = calloc(bufsz, 1); // FIXME: I am lazy... But in principle, 64KB should be large enough.
+	buf = calloc(bufsz, 1); // FIXME: I am lazy... But in principle, 64KB should be large enough. id:16 gh:34 ic:gh
 	l += snprintf(buf + l, bufsz, "GET %s HTTP/1.0\r\nHost: %s\r\n\r\n",
 				 path, http_host);
 	if (write_bytes(fd, buf, l) != 0) {
@@ -151,7 +151,7 @@ static int kftp_get_response(ftpaux_t *aux)
 	int n = 0;
 	char *p;
 	if (socket_wait(aux->ctrl_fd, 1) <= 0) return 0;
-	while (read(aux->ctrl_fd, &c, 1)) { // FIXME: this is *VERY BAD* for unbuffered I/O
+	while (read(aux->ctrl_fd, &c, 1)) { // FIXME: this is *VERY BAD* for unbuffered I/O id:22 gh:41 ic:gh
 		if (n >= aux->max_response) {
 			aux->max_response = aux->max_response? aux->max_response<<1 : 256;
 			aux->response = realloc(aux->response, aux->max_response);
@@ -298,7 +298,7 @@ void *kopen(const char *fn, int *_fd)
 				return 0;
 			}
 			if (pid == 0) { /* the child process */
-				char **argv; /* FIXME: I do not know if this will lead to a memory leak */
+				char **argv; /* FIXME: I do not know if this will lead to a memory leak id:28 gh:40 ic:gh*/
 				close(pfd[0]);
 				dup2(pfd[1], STDOUT_FILENO);
 				close(pfd[1]);

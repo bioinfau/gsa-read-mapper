@@ -44,7 +44,7 @@ static const char* cigar_alignment(const char* cigar,
         int matched_tokens = sscanf(cigar, "%d%c%n", &count, &op, &no_chars_scanned);
         if (matched_tokens != 2)
             break;
-        cigar += no_chars_scanned; // FIXME:
+        cigar += no_chars_scanned; // FIXME: id:29 gh:47 ic:gh
         switch (op)
         {
         case '=':

@@ -127,7 +127,7 @@ void bsw2_extend_left(const bsw2opt_t *opt, bwtsw2_t *b, uint8_t *_query, int lq
 		}
 		if (score) continue;
 		if (lt > p->k) lt = p->k;
-		for (k = p->k - 1, j = 0; k > 0 && j < lt; --k) // FIXME: k=0 not considered!
+		for (k = p->k - 1, j = 0; k > 0 && j < lt; --k) // FIXME: k=0 not considered! id:20 gh:38 ic:gh
 			target[j++] = pac[k>>2] >> (~k&3)*2 & 0x3;
 		lt = j;
 		score = ksw_extend(p->beg, &query[lq - p->beg], lt, target, 5, mat, opt->q, opt->r, opt->bw, 0, -1, p->G, &qle, &tle, 0, 0, 0);
@@ -325,7 +325,7 @@ typedef struct {
 
 static int fix_cigar(const bntseq_t *bns, bsw2hit_t *p, int n_cigar, uint32_t *cigar)
 {
-	// FIXME: this routine does not work if the query bridge three reference sequences
+	// FIXME: this routine does not work if the query bridge three reference sequences id:26 gh:45 ic:gh
 	int32_t coor, refl, lq;
 	int x, y, i, seqid;
 	bns_cnt_ambi(bns, p->k, p->len, &seqid);
@@ -364,7 +364,7 @@ static int fix_cigar(const bntseq_t *bns, bsw2hit_t *p, int n_cigar, uint32_t *c
 				x += ln;
 			} else if (op == 0) { // match
 				if (x + ln >= refl && nc == 0) {
-					// FIXME: not consider a special case where a split right between M and I
+					// FIXME: not consider a special case where a split right between M and I id:3 gh:21 ic:gh
 					cn[j++] = (uint32_t)(refl - x)<<4 | 0; // write M
 					cn[j++] = (uint32_t)(lq - y - (refl - x))<<4 | 4; // write S
 					nc = j;
@@ -584,7 +584,7 @@ static void bsw2_aln_core(bsw2seq_t *_seq, const bsw2opt_t *_opt, const bntseq_t
 		// convert sequences to 2-bit representation
 		for (i = k = 0; i < l; ++i) {
 			int c = nst_nt4_table[(int)p->seq[i]];
-			if (c >= 4) { c = (int)(drand48() * 4); ++k; } // FIXME: ambiguous bases are not properly handled
+			if (c >= 4) { c = (int)(drand48() * 4); ++k; } // FIXME: ambiguous bases are not properly handled id:9 gh:27 ic:gh
 			seq[0][i] = c;
 			seq[1][l-1-i] = 3 - c;
 			rseq[0][l-1-i] = 3 - c;
