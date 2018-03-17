@@ -3,10 +3,12 @@
 #include "strings.h"
 #include "pair_stack.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+
 
 static struct suffix_array *allocate_sa(char *string)
 {

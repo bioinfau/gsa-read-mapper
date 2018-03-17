@@ -21,7 +21,6 @@
 		32B4845B2057CD0300AE904F /* fastq.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484472057CD0100AE904F /* fastq.c */; };
 		32B4845C2057CD0300AE904F /* size_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484482057CD0100AE904F /* size_vector.c */; };
 		32B4845E2057CD0300AE904F /* match_readmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B4844B2057CD0200AE904F /* match_readmap.c */; };
-		32B4845F2057CD0300AE904F /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B4844C2057CD0200AE904F /* buffer.c */; };
 		32B484602057CD0300AE904F /* cigar.c in Sources */ = {isa = PBXBuildFile; fileRef = 32B484502057CD0300AE904F /* cigar.c */; };
 /* End PBXBuildFile section */
 
@@ -63,9 +62,7 @@
 		32B484462057CD0100AE904F /* suffix_array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = suffix_array.c; sourceTree = SOURCE_ROOT; };
 		32B484472057CD0100AE904F /* fastq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fastq.c; sourceTree = SOURCE_ROOT; };
 		32B484482057CD0100AE904F /* size_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = size_vector.c; sourceTree = SOURCE_ROOT; };
-		32B484492057CD0200AE904F /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = SOURCE_ROOT; };
 		32B4844B2057CD0200AE904F /* match_readmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = match_readmap.c; sourceTree = SOURCE_ROOT; };
-		32B4844C2057CD0200AE904F /* buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer.c; sourceTree = SOURCE_ROOT; };
 		32B4844D2057CD0200AE904F /* string_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = string_vector.h; sourceTree = SOURCE_ROOT; };
 		32B4844E2057CD0300AE904F /* fastq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastq.h; sourceTree = SOURCE_ROOT; };
 		32B4844F2057CD0300AE904F /* trie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trie.h; sourceTree = SOURCE_ROOT; };
@@ -104,8 +101,6 @@
 			children = (
 				3260AA95205BF7F100593C4B /* options.c */,
 				3260AA96205BF7F100593C4B /* options.h */,
-				32B4844C2057CD0200AE904F /* buffer.c */,
-				32B484492057CD0200AE904F /* buffer.h */,
 				32B484502057CD0300AE904F /* cigar.c */,
 				32B484452057CD0100AE904F /* cigar.h */,
 				32B484372057CCFF00AE904F /* edit_distance_generator.c */,
@@ -207,7 +202,6 @@
 				32B484572057CD0300AE904F /* pair_stack.c in Sources */,
 				32B484522057CD0300AE904F /* trie.c in Sources */,
 				32B4845E2057CD0300AE904F /* match_readmap.c in Sources */,
-				32B4845F2057CD0300AE904F /* buffer.c in Sources */,
 				32B484602057CD0300AE904F /* cigar.c in Sources */,
 				32B484542057CD0300AE904F /* sam.c in Sources */,
 			);

@@ -18,12 +18,11 @@ ac_readmap.o: fasta.h string_vector.h size_vector.h fastq.h sam.h
 ac_readmap.o: string_vector_vector.h aho_corasick.h trie.h
 ac_readmap.o: edit_distance_generator.h options.h
 aho_corasick.o: aho_corasick.h trie.h
-buffer.o: buffer.h
 cigar.o: cigar.h
 edit_distance_generator.o: edit_distance_generator.h options.h cigar.h
 fasta.o: fasta.h string_vector.h size_vector.h strings.h
 fastq.o: fastq.h strings.h
-match.o: match.h buffer.h
+match.o: match.h
 options.o: options.h
 pair_stack.o: pair_stack.h
 queue.o: queue.h
