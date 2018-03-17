@@ -197,7 +197,7 @@ bntseq_t *bns_restore(const char *prefix)
 				}
 				while (c != '\n' && c != EOF) c = fgetc(fp);
 				i = 0;
-			} else str[i++] = c; // FIXME: potential segfault here
+			} else str[i++] = c; // FIXME: potential segfault here id:32 gh:52 ic:gh
 		}
 		kh_destroy(str, h);
 		fclose(fp);

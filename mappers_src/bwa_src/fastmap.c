@@ -191,7 +191,7 @@ int main_mem(int argc, char *argv[])
 			if (*p != 0 && ispunct(*p) && isdigit(p[1]))
 				opt->pen_clip3 = strtol(p+1, &p, 10);
 		} else if (c == 'R') {
-			if ((rg_line = bwa_set_rg(optarg)) == 0) return 1; // FIXME: memory leak
+			if ((rg_line = bwa_set_rg(optarg)) == 0) return 1; // FIXME: memory leak id:45 gh:65 ic:gh
 		} else if (c == 'H') {
 			if (optarg[0] != '@') {
 				FILE *fp;
@@ -319,14 +319,14 @@ int main_mem(int argc, char *argv[])
 			}
 		} else {
 			fprintf(stderr, "[E::%s] unknown read type '%s'\n", __func__, mode);
-			return 1; // FIXME memory leak
+			return 1; // FIXME memory leak id:50 gh:70 ic:gh
 		}
 	} else update_a(opt, &opt0);
 	bwa_fill_scmat(opt->a, opt->b, opt->mat);
 
 	aux.idx = bwa_idx_load_from_shm(argv[optind]);
 	if (aux.idx == 0) {
-		if ((aux.idx = bwa_idx_load(argv[optind], BWA_IDX_ALL)) == 0) return 1; // FIXME: memory leak
+		if ((aux.idx = bwa_idx_load(argv[optind], BWA_IDX_ALL)) == 0) return 1; // FIXME: memory leak id:57 gh:77 ic:gh
 	} else if (bwa_verbose >= 3)
 		fprintf(stderr, "[M::%s] load the bwa index from shared memory\n", __func__);
 	if (ignore_alt)

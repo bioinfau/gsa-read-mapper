@@ -338,7 +338,7 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable)
 		bwt->decodeTable = (unsigned*)calloc(DNA_OCC_CNT_TABLE_SIZE_IN_WORD, sizeof(unsigned int));
 		GenerateDNAOccCountTable(bwt->decodeTable);
 	} else {
-		// FIXME Prevent BWTFree() from freeing decodeTable in this case
+		// FIXME Prevent BWTFree() from freeing decodeTable in this case id:38 gh:58 ic:gh
 		bwt->decodeTable = decodeTable;
 	}
 

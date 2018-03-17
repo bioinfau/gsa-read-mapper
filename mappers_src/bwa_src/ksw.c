@@ -404,7 +404,7 @@ int ksw_extend2(int qlen, const uint8_t *query, int tlen, const uint8_t *target,
 	w = w < max_ins? w : max_ins;
 	max_del = (int)((double)(qlen * max + end_bonus - o_del) / e_del + 1.);
 	max_del = max_del > 1? max_del : 1;
-	w = w < max_del? w : max_del; // TODO: is this necessary?
+	w = w < max_del? w : max_del; // TODO: is this necessary? id:58 gh:78 ic:gh
 	// DP loop
 	max = h0, max_i = max_j = -1; max_ie = -1, gscore = -1;
 	max_off = 0;
