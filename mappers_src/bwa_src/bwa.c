@@ -41,7 +41,7 @@ static inline char *dupkstring(const kstring_t *str, int dupempty)
 }
 
 static inline void kseq2bseq1(const kseq_t *ks, bseq1_t *s)
-{ // TODO: it would be better to allocate one chunk of memory, but probably it does not matter in practice
+{ // TODO: it would be better to allocate one chunk of memory, but probably it does not matter in practice id:36 gh:56 ic:gh
 	s->name = dupkstring(&ks->name, 1);
 	s->comment = dupkstring(&ks->comment, 0);
 	s->seq = dupkstring(&ks->seq, 1);
