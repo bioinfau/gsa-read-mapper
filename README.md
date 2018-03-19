@@ -166,7 +166,7 @@ The preprocessing- and run-scripts are also used by the evaluation script. The s
 
 A successful evaluation should look something like this:
 
-![](images/sucessful-evaluation-exact.png)
+![](images/successful-evaluation-exact.png)
 
 Here, we see that the fastest mapper, not surprisingly, is `bwa`, then the `match_readmapper` followed by the other two. This is slightly misleading, though; the `match_readmapper` is slightly faster than the `bw_readmapper` and much faster than the `ac_readmapper` when `d` is zero. When we are searching for one read at a time, the benefits of the Burrows-Wheeler and Aho-Corsick algorithms are not present but the overhead is. Setting `d` to one, however, will make the script unreasonably slow. The `evaluate_mappers_approximative.sh` script uses a default of `d=1` and excludes `match_readmapper`. With a small enough data set you can try to add `match_readmapper` to it and see how it goes.
 
