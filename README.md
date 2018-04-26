@@ -104,7 +104,7 @@ If you have built your read-mapper to accept parameters like that, you only have
 * you need some pre-processing of the reference genome, or
 * your mapper takes other options than these
 
-then you can adapt your mapper using two scripts:
+then you can adapt your mapper using two scripts (that must be placed in the `evaluation` directory):
 
 * `${mapper}.preprocess` — where `${mapper}` is the name of your mapper, as specified in the `mappers` variable in the script, and
 * `${mapper}.run` — where, again `${mapper}` is the name of the mapper.
