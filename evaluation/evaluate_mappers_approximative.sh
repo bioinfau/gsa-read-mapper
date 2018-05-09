@@ -92,8 +92,8 @@ for mapper in $mappers; do
 		else
     		failure_tick "Preprocessing failed. Check $(tput setaf 4)$(tput bold)`basename ${log_file}`$(tput sgr0) for further information."
 		fi
-		
-	else 
+
+	else
 		if [ -e ${mapper}.preprocess ]; then
 			failure "The file $(tput setaf 4)$(tput bold)evaluation/${mapper}.preprocess$(tput sgr0) exists but is not executable!"
 		fi
@@ -143,4 +143,3 @@ else
 	printf "You do not have R installed, so the report plot is not updated. $(tput setaf 1)$(tput bold)✘$(tput sgr0)\n"
 fi
 echo
-
