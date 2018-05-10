@@ -77,5 +77,8 @@ mappers_src/head-ac-small.sam
 mappers_src/head-bw-small.sam
 mappers_src/test2.fq
 
+evaluation-report-approximative.txt
+evaluation-report-exact.txt
+test-report.txt
 *.log
 *.bak
