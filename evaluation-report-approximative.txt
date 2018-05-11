@@ -1,0 +1,16 @@
+mapper              time
+bwa                 1.98
+bwa                 0.07
+bwa                 0.07
+bwa                 0.07
+bwa                 0.07
+ac_readmapper       8.80
+ac_readmapper       8.06
+ac_readmapper       8.12
+ac_readmapper       8.00
+ac_readmapper       8.04
+bw_readmapper       6.26
+bw_readmapper       4.92
+bw_readmapper       2.64
+bw_readmapper       4.03
+bw_readmapper       3.57
