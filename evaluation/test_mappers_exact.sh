@@ -77,8 +77,8 @@ touch $log_file
 ## Reference
 echo
 echo "Building reference SAM file using $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0) : "
-if [ -e ${ref_mapper}.sam ] && [ ${ref_mapper}.sam -nt ../mappers_src/${ref_mapper} ]; then
-	printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.sam$(tput sgr0) already exists "
+if [ -e ${ref_mapper}-exact.sam ] && [ ${ref_mapper}-exact.sam -nt ../mappers_src/${ref_mapper} ]; then
+	printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}-exact.sam$(tput sgr0) already exists "
 	success
 else
 	### Preprocessing --------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ else
 	### Constructing reference SAM --------------------------------------------------------------------
 	if [ -x ${ref_mapper}.run ]; then
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${ref_mapper}.run$(tput sgr0) "
-		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
+		./${ref_mapper}.run -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}-exact.sam
 		if [ $? -eq 0 ]; then
    			success
 		else
@@ -115,7 +115,7 @@ else
 	else
 		# if we don't have a run script we call the read-mapper directly
 		printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${ref_mapper}$(tput sgr0) "
-		${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}.sam
+		${ref_mapper} -d $d ${reference} ${reads} 2> $log_file | sort > ${ref_mapper}-exact.sam
 		if [ $? -eq 0 ]; then
 			success
 		else
@@ -130,8 +130,8 @@ success
 
 for mapper in $mappers; do
 	echo "Building SAM file using $(tput setaf 4)$(tput bold)${mapper}$(tput sgr0) : "
-	if [ -e ${mapper}.sam ] && [ ${mapper}.sam -nt ../mappers_src/${mapper} ]; then
-		printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${mapper}.sam$(tput sgr0) already exists "
+	if [ -e ${mapper}-exact.sam ] && [ ${mapper}-exact.sam -nt ../mappers_src/${mapper} ]; then
+		printf "   • SAM file $(tput setaf 4)$(tput bold)evaluation/${mapper}-exact.sam$(tput sgr0) already exists "
 		success
 	else
 		### Preprocessing --------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ for mapper in $mappers; do
 		### Constructing reference SAM --------------------------------------------------------------------
 		if [ -x ${mapper}.run ]; then
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)evaluation/${mapper}.run$(tput sgr0) "
-			./${mapper}.run -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
+			./${mapper}.run -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}-exact.sam
 			if [ $? -eq 0 ]; then
    				success
 			else
@@ -168,7 +168,7 @@ for mapper in $mappers; do
 		else
 			# if we don't have a run script we call the read-mapper directly
 			printf "   • Read-mapping using $(tput setaf 4)$(tput bold)mappers_src/${mapper}$(tput sgr0) "
-			${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}.sam
+			${mapper} -d $d ${reference} ${reads}  2> $log_file | sort > ${mapper}-exact.sam
 			if [ $? -eq 0 ]; then
 				success
 			else
@@ -180,7 +180,7 @@ for mapper in $mappers; do
 	fi
 	## Compare to reference results
 	printf "   • Comparing $(tput setaf 4)$(tput bold)${mapper}$(tput sgr0) to $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0) "
-	if ( cmp ${ref_mapper}.sam ${mapper}.sam ); then
+	if ( cmp ${ref_mapper}-exact.sam ${mapper}-exact.sam ); then
 		success
 	else
 		failure "$(tput bold)${mapper}$(tput sgr0) differs from $(tput setaf 4)$(tput bold)${ref_mapper}$(tput sgr0)"
